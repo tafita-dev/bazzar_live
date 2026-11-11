@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -44,16 +45,12 @@ class _RootRoleRedirectScreenState
 
       data: (profile) {
         if (profile == null) {
-          return _ProfileNotFound(
-            onLogout: () => confirmSignOut(context, ref),
-          );
+          return _ProfileNotFound(onLogout: () => confirmSignOut(context, ref));
         }
 
         _redirectByRole(profile.role);
 
-        return const _PremiumLoading(
-          message: 'Préparation de votre espace...',
-        );
+        return const _PremiumLoading(message: 'Préparation de votre espace...');
       },
     );
   }
@@ -111,34 +108,26 @@ class _RootRoleRedirectScreenState
 class _PremiumLoading extends StatelessWidget {
   final String message;
 
-  const _PremiumLoading({
-    this.message = 'Chargement de votre espace...',
-  });
+  const _PremiumLoading({this.message = 'Chargement de votre espace...'});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       body: Stack(
         children: [
           // Glow haut droite
-          Positioned(
+          const Positioned(
             top: -130,
             right: -100,
-            child: _GlowCircle(
-              size: 300,
-              color: const Color(0xFF7C3AED),
-            ),
+            child: _GlowCircle(size: 300, color: BazzarColors.primary),
           ),
 
           // Glow bas gauche
-          Positioned(
+          const Positioned(
             bottom: -150,
             left: -120,
-            child: _GlowCircle(
-              size: 320,
-              color: const Color(0xFF8B5CF6),
-            ),
+            child: _GlowCircle(size: 320, color: Color(0xFF8B5CF6)),
           ),
 
           SafeArea(
@@ -180,7 +169,7 @@ class _PremiumLoading extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF111827),
+                        color: BazzarColors.ink,
                         letterSpacing: 0,
                       ),
                     ),
@@ -192,7 +181,7 @@ class _PremiumLoading extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF6B7280),
+                        color: BazzarColors.muted,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -205,12 +194,12 @@ class _PremiumLoading extends StatelessWidget {
                       height: 48,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                        color: BazzarColors.primary.withValues(alpha: 0.08),
                         shape: BoxShape.circle,
                       ),
                       child: const CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        color: Color(0xFF7C3AED),
+                        color: BazzarColors.primary,
                       ),
                     ),
                   ],
@@ -232,10 +221,7 @@ class _GlowCircle extends StatelessWidget {
   final double size;
   final Color color;
 
-  const _GlowCircle({
-    required this.size,
-    required this.color,
-  });
+  const _GlowCircle({required this.size, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -260,15 +246,12 @@ class _ProfileError extends StatelessWidget {
   final Object error;
   final VoidCallback onRetry;
 
-  const _ProfileError({
-    required this.error,
-    required this.onRetry,
-  });
+  const _ProfileError({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -298,7 +281,7 @@ class _ProfileError extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 21,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
 
@@ -310,7 +293,7 @@ class _ProfileError extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5,
-                    color: Color(0xFF6B7280),
+                    color: BazzarColors.muted,
                   ),
                 ),
 
@@ -321,10 +304,7 @@ class _ProfileError extends StatelessWidget {
                   height: 52,
                   child: ElevatedButton.icon(
                     onPressed: onRetry,
-                    icon: const Icon(
-                      Icons.refresh_rounded,
-                      size: 20,
-                    ),
+                    icon: const Icon(Icons.refresh_rounded, size: 20),
                     label: const Text(
                       'Réessayer',
                       style: TextStyle(
@@ -333,7 +313,7 @@ class _ProfileError extends StatelessWidget {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C3AED),
+                      backgroundColor: BazzarColors.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -352,7 +332,7 @@ class _ProfileError extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Color(0xFF9CA3AF),
+                    color: BazzarColors.muted,
                   ),
                 ),
               ],
@@ -371,14 +351,12 @@ class _ProfileError extends StatelessWidget {
 class _ProfileNotFound extends StatelessWidget {
   final VoidCallback onLogout;
 
-  const _ProfileNotFound({
-    required this.onLogout,
-  });
+  const _ProfileNotFound({required this.onLogout});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -390,12 +368,12 @@ class _ProfileNotFound extends StatelessWidget {
                   width: 84,
                   height: 84,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                    color: BazzarColors.primary.withValues(alpha: 0.08),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.person_search_rounded,
-                    color: Color(0xFF7C3AED),
+                    color: BazzarColors.primary,
                     size: 40,
                   ),
                 ),
@@ -407,7 +385,7 @@ class _ProfileNotFound extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
 
@@ -419,7 +397,7 @@ class _ProfileNotFound extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5,
-                    color: Color(0xFF6B7280),
+                    color: BazzarColors.muted,
                   ),
                 ),
 
@@ -430,10 +408,7 @@ class _ProfileNotFound extends StatelessWidget {
                   height: 52,
                   child: ElevatedButton.icon(
                     onPressed: onLogout,
-                    icon: const Icon(
-                      Icons.logout_rounded,
-                      size: 19,
-                    ),
+                    icon: const Icon(Icons.logout_rounded, size: 19),
                     label: const Text(
                       'Se déconnecter',
                       style: TextStyle(
@@ -442,7 +417,7 @@ class _ProfileNotFound extends StatelessWidget {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF111827),
+                      backgroundColor: BazzarColors.ink,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(

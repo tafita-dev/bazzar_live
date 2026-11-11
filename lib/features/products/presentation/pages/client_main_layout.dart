@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +28,9 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
     final client = Supabase.instance.client;
     final userId = client.auth.currentUser?.id;
     if (userId != null) {
-      debugPrint('[REALTIME_NOTIFICATION] Setting up realtime subscription for user=$userId');
+      debugPrint(
+        '[REALTIME_NOTIFICATION] Setting up realtime subscription for user=$userId',
+      );
       _realtimeChannel = client
           .channel('public:reservations:client_notifications')
           .onPostgresChanges(
@@ -40,8 +43,10 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
               value: userId,
             ),
             callback: (payload) {
-              debugPrint('[REALTIME_NOTIFICATION] Change received: event=${payload.eventType}');
-              
+              debugPrint(
+                '[REALTIME_NOTIFICATION] Change received: event=${payload.eventType}',
+              );
+
               // Invalidate reservation provider to refresh orders list
               ref.invalidate(clientReservationsProvider(userId));
 
@@ -55,13 +60,24 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
 
                   // Only notify if status has actually changed
                   if (status != null && status != oldStatus) {
-                    final orderId = newRecord['id']?.toString().substring(0, 8).toUpperCase() ?? '';
-                    final statusLabel = status == 'validated' 
-                        ? 'confirmée' 
-                        : (status == 'delivered' ? 'livrée' : (status == 'cancelled' ? 'annulée' : status));
+                    final orderId =
+                        newRecord['id']
+                            ?.toString()
+                            .substring(0, 8)
+                            .toUpperCase() ??
+                        '';
+                    final statusLabel = status == 'validated'
+                        ? 'confirmée'
+                        : (status == 'delivered'
+                              ? 'livrée'
+                              : (status == 'cancelled' ? 'annulée' : status));
 
-                    if (mounted && (status == 'validated' || status == 'delivered' || status == 'cancelled')) {
-                      final msg = 'Votre commande #$orderId a été $statusLabel !';
+                    if (mounted &&
+                        (status == 'validated' ||
+                            status == 'delivered' ||
+                            status == 'cancelled')) {
+                      final msg =
+                          'Votre commande #$orderId a été $statusLabel !';
                       if (status == 'validated') {
                         AppNotification.showGlobal(msg);
                       } else if (status == 'delivered') {
@@ -75,7 +91,7 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
               }
             },
           );
-      
+
       _realtimeChannel!.subscribe();
     }
   }
@@ -93,24 +109,31 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
   Widget build(BuildContext context) {
     final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
     final reservationsAsync = ref.watch(clientReservationsProvider(userId));
-    
+
     int pendingCount = 0;
     reservationsAsync.whenData((reservations) {
-      pendingCount = reservations.where((r) => r.status.toLowerCase() == 'pending').length;
+      pendingCount = reservations
+          .where((r) => r.status.toLowerCase() == 'pending')
+          .length;
     });
 
     return Scaffold(
       body: widget.navigationShell,
       bottomNavigationBar: Container(
-        height: 80,
+        height:
+            80 +
+            MediaQuery.paddingOf(context).bottom +
+            (MediaQuery.textScalerOf(context).scale(12) - 12)
+                .clamp(0, 48)
+                .toDouble(),
         decoration: BoxDecoration(
           color: Colors.white,
           border: const Border(
-            top: BorderSide(color: Color(0xFFE5E7EB), width: 1),
+            top: BorderSide(color: BazzarColors.border, width: 1),
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF111827).withValues(alpha: 0.06),
+              color: BazzarColors.ink.withValues(alpha: 0.06),
               blurRadius: 24,
               offset: const Offset(0, -8),
             ),
@@ -121,9 +144,28 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(context, 0, Icons.home_rounded, Icons.home_outlined, 'Accueil'),
-              _buildNavItem(context, 1, Icons.shopping_bag_rounded, Icons.shopping_bag_outlined, 'Commandes', badgeCount: pendingCount),
-              _buildNavItem(context, 2, Icons.person_rounded, Icons.person_outline_rounded, 'Profil'),
+              _buildNavItem(
+                context,
+                0,
+                Icons.home_rounded,
+                Icons.home_outlined,
+                'Accueil',
+              ),
+              _buildNavItem(
+                context,
+                1,
+                Icons.shopping_bag_rounded,
+                Icons.shopping_bag_outlined,
+                'Commandes',
+                badgeCount: pendingCount,
+              ),
+              _buildNavItem(
+                context,
+                2,
+                Icons.person_rounded,
+                Icons.person_outline_rounded,
+                'Profil',
+              ),
             ],
           ),
         ),
@@ -140,8 +182,8 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
     int badgeCount = 0,
   }) {
     final isSelected = widget.navigationShell.currentIndex == index;
-    const Color activeTextColor = Color(0xFF7C3AED);
-    const Color inactiveColor = Color(0xFF9CA3AF);
+    const Color activeTextColor = BazzarColors.primary;
+    const Color inactiveColor = Color(0xFF757086);
 
     return Expanded(
       child: Material(
@@ -159,10 +201,13 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
                 children: [
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 220),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFF7C3AED).withValues(alpha: 0.1)
+                          ? BazzarColors.primary.withValues(alpha: 0.1)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -177,7 +222,10 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
                       top: -3,
                       right: 6,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [Color(0xFFEF4444), Color(0xFFEF4444)],
@@ -185,13 +233,18 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.45),
+                              color: const Color(
+                                0xFFEF4444,
+                              ).withValues(alpha: 0.45),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
                           ],
                         ),
-                        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         child: Text(
                           badgeCount > 9 ? '9+' : '$badgeCount',
                           style: const TextStyle(
@@ -210,7 +263,7 @@ class _ClientMainLayoutState extends ConsumerState<ClientMainLayout> {
                 label,
                 style: TextStyle(
                   color: isSelected ? activeTextColor : inactiveColor,
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
                   letterSpacing: 0,
                 ),

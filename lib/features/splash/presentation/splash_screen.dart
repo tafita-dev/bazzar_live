@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _mainController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -36,15 +38,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.3, 0.85, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0.0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.3, 0.85, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _mainController.forward();
   }
@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF111827),
+      backgroundColor: BazzarColors.ink,
       body: Stack(
         alignment: Alignment.center,
         children: [
@@ -66,26 +66,17 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           Positioned(
             top: -60,
             right: -60,
-            child: _buildGlowOrb(
-              size: 280,
-              color: const Color(0xFF7C3AED),
-            ),
+            child: _buildGlowOrb(size: 280, color: BazzarColors.primary),
           ),
           Positioned(
             top: 220,
             left: -80,
-            child: _buildGlowOrb(
-              size: 220,
-              color: const Color(0xFF6D28D9),
-            ),
+            child: _buildGlowOrb(size: 220, color: BazzarColors.primaryDark),
           ),
           Positioned(
             bottom: -80,
             left: -60,
-            child: _buildGlowOrb(
-              size: 320,
-              color: const Color(0xFF7C3AED),
-            ),
+            child: _buildGlowOrb(size: 320, color: BazzarColors.primary),
           ),
 
           // Central Animated Brand Content
@@ -111,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF7C3AED).withValues(alpha: 0.4),
+                            color: BazzarColors.primary.withValues(alpha: 0.4),
                             blurRadius: 36,
                             offset: const Offset(0, 12),
                           ),
@@ -125,7 +116,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           errorBuilder: (_, __, ___) => Container(
                             decoration: const BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Color(0xFF7C3AED), Color(0xFF6D28D9), Color(0xFF7C3AED)],
+                                colors: [
+                                  Color(0xFF30205C),
+                                  BazzarColors.primaryDark,
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
@@ -159,7 +153,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         ),
                         const SizedBox(height: 10),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -171,12 +168,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ContainerDot(color: Color(0xFF7C3AED)),
+                              ContainerDot(color: BazzarColors.primary),
                               SizedBox(width: 8),
                               Text(
                                 'LIVE SHOPPING STREAMING',
                                 style: TextStyle(
-                                  color: Color(0xFFE5E7EB),
+                                  color: BazzarColors.border,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 1.2,
@@ -233,9 +230,9 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   Widget _buildPulsingDot(int index) {
     final colors = [
-      const Color(0xFF7C3AED),
-      const Color(0xFF6D28D9),
-      const Color(0xFF7C3AED),
+      BazzarColors.primary,
+      BazzarColors.primaryDark,
+      BazzarColors.primary,
     ];
 
     return Container(

@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -7,6 +8,16 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         title: const Text('Live Shopping'),
       ),
       body: const Center(

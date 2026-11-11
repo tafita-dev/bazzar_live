@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:live_shopping/core/router/router.dart';
 
@@ -20,14 +21,23 @@ class AppNotification {
   }
 
   /// Affiche une notification globale sans avoir besoin d'un BuildContext local (utilise rootNavigatorKey).
-  static void showGlobal(String message, {bool isError = false, bool isInfo = false}) {
+  static void showGlobal(
+    String message, {
+    bool isError = false,
+    bool isInfo = false,
+  }) {
     final context = rootNavigatorKey.currentContext;
     if (context != null) {
       _show(context, message, isError: isError, isInfo: isInfo);
     }
   }
 
-  static void _show(BuildContext context, String message, {required bool isError, required bool isInfo}) {
+  static void _show(
+    BuildContext context,
+    String message, {
+    required bool isError,
+    required bool isInfo,
+  }) {
     _currentEntry?.remove();
     _currentEntry = null;
 
@@ -72,7 +82,8 @@ class TopNotificationOverlay extends StatefulWidget {
   State<TopNotificationOverlay> createState() => _TopNotificationOverlayState();
 }
 
-class _TopNotificationOverlayState extends State<TopNotificationOverlay> with SingleTickerProviderStateMixin {
+class _TopNotificationOverlayState extends State<TopNotificationOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
 
@@ -86,10 +97,7 @@ class _TopNotificationOverlayState extends State<TopNotificationOverlay> with Si
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0.0, -1.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutBack,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
@@ -125,8 +133,8 @@ class _TopNotificationOverlayState extends State<TopNotificationOverlay> with Si
       glowColor = const Color(0xFFEF4444);
       icon = Icons.error_rounded;
     } else if (widget.isInfo) {
-      bgColor = const Color(0xFF7C3AED); // Info violet royal
-      glowColor = const Color(0xFF7C3AED);
+      bgColor = BazzarColors.primary; // Info violet royal
+      glowColor = BazzarColors.primary;
       icon = Icons.info_rounded;
     }
 
@@ -142,7 +150,10 @@ class _TopNotificationOverlayState extends State<TopNotificationOverlay> with Si
               direction: DismissDirection.up,
               onDismissed: (_) => widget.onDismiss(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18.0,
+                  vertical: 14.0,
+                ),
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(20.0),
@@ -185,7 +196,11 @@ class _TopNotificationOverlayState extends State<TopNotificationOverlay> with Si
                           color: Colors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.close_rounded, color: Colors.white, size: 16),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                       ),
                     ),
                   ],

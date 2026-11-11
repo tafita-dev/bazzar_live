@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,7 +8,6 @@ import '../../../../features/seller_dashboard/presentation/widgets/seller_app_dr
 import '../../../products/presentation/providers/product_provider.dart';
 import 'package:live_shopping/features/live/presentation/providers/live_provider.dart';
 import 'package:live_shopping/core/utils/currency_helper.dart';
-import 'package:live_shopping/core/theme/app_theme.dart';
 
 class LiveShoppingScreen extends ConsumerStatefulWidget {
   const LiveShoppingScreen({super.key});
@@ -37,23 +38,34 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
     final productsAsync = ref.watch(sellerProductsProvider(sellerId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.sunsetAuroraGradient,
-          ),
-        ),
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
+            icon: const Icon(Icons.menu, color: BazzarColors.ink),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        title: const Text(
-          'Live Shopping',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+        title: const BazzarPageTitle(
+          title: Text(
+            'Live Shopping',
+            style: TextStyle(
+              color: BazzarColors.ink,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          subtitle: 'Votre boutique passe en direct',
         ),
       ),
       drawer: SellerAppDrawer(sellerId: sellerId),
@@ -66,6 +78,12 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const BazzarIntro(
+                    title: 'À vous de jouer.',
+                    description:
+                        'Préparez votre diffusion et présentez vos produits à votre communauté.',
+                    icon: Icons.videocam_outlined,
+                  ),
                   activeLivesAsync.when(
                     loading: () => const LinearProgressIndicator(),
                     error: (error, _) => _InfoBox(
@@ -84,7 +102,8 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
                       if (sellerLive == null) {
                         return const _InfoBox(
                           icon: Icons.live_tv_rounded,
-                          text: 'Aucun live actif. Collez le lien Facebook public puis demarrez.',
+                          text:
+                              'Aucun live actif. Collez le lien Facebook public puis demarrez.',
                         );
                       }
 
@@ -92,7 +111,9 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
                       return _ActiveLiveCard(
                         title: activeLive.title,
                         description: activeLive.description,
-                        onStop: _isSaving ? null : () => _stopLive(activeLive.id),
+                        onStop: _isSaving
+                            ? null
+                            : () => _stopLive(activeLive.id),
                       );
                     },
                   ),
@@ -102,7 +123,7 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
                   const Text(
                     'Produits visibles pendant le live',
                     style: TextStyle(
-                      color: Color(0xFF111827),
+                      color: BazzarColors.ink,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -134,7 +155,8 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
                   sliver: SliverToBoxAdapter(
                     child: _InfoBox(
                       icon: Icons.inventory_2_outlined,
-                      text: 'Ajoutez des produits pour les afficher aux clients pendant le live.',
+                      text:
+                          'Ajoutez des produits pour les afficher aux clients pendant le live.',
                     ),
                   ),
                 );
@@ -143,83 +165,83 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
               return SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final product = products[index];
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: product.imageUrl == null
-                                  ? Container(
-                                      width: 58,
-                                      height: 58,
-                                      color: const Color(0xFFECEBFF),
-                                      child: const Icon(Icons.shopping_bag_outlined),
-                                    )
-                                  : Image.network(
-                                      product.imageUrl!,
-                                      width: 58,
-                                      height: 58,
-                                      fit: BoxFit.cover,
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final product = products[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: product.imageUrl == null
+                                ? Container(
+                                    width: 58,
+                                    height: 58,
+                                    color: const Color(0xFFECEBFF),
+                                    child: const Icon(
+                                      Icons.shopping_bag_outlined,
                                     ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Color(0xFF111827),
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  )
+                                : Image.network(
+                                    product.imageUrl!,
+                                    width: 58,
+                                    height: 58,
+                                    fit: BoxFit.cover,
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Stock: ${product.stock}',
-                                    style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: BazzarColors.ink,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Stock: ${product.stock}',
+                                  style: const TextStyle(
+                                    color: BazzarColors.muted,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              formatPrice(product.price),
-                              style: const TextStyle(
-                                color: Color(0xFF7C3AED),
-                                fontWeight: FontWeight.w800,
-                              ),
+                          ),
+                          Text(
+                            formatPrice(product.price),
+                            style: const TextStyle(
+                              color: BazzarColors.primary,
+                              fontWeight: FontWeight.w800,
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                    childCount: products.length,
-                  ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }, childCount: products.length),
                 ),
               );
             },
           ),
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 24),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );
@@ -247,7 +269,7 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
             const Text(
               'Demarrer un live Facebook',
               style: TextStyle(
-                color: Color(0xFF111827),
+                color: BazzarColors.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -278,7 +300,9 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
               ),
               validator: (value) {
                 final url = Uri.tryParse(value?.trim() ?? '');
-                if (url == null || !url.hasScheme || !url.host.contains('facebook.com')) {
+                if (url == null ||
+                    !url.hasScheme ||
+                    !url.host.contains('facebook.com')) {
                   return 'Collez un lien Facebook public valide.';
                 }
                 return null;
@@ -309,11 +333,11 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
                     : const Icon(Icons.play_circle_fill_rounded),
                 label: const Text('Demarrer le live'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C3AED),
+                  backgroundColor: BazzarColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
               ),
@@ -330,7 +354,7 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
     setState(() => _isSaving = true);
     try {
       final client = Supabase.instance.client;
-      
+
       final profile = await client
           .from('profiles')
           .select('shop_name')
@@ -338,7 +362,10 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
           .single();
       final shopName = profile['shop_name'] as String?;
 
-      await client.from('lives').update({'is_active': false}).eq('seller_id', sellerId);
+      await client
+          .from('lives')
+          .update({'is_active': false})
+          .eq('seller_id', sellerId);
       await client.from('lives').insert({
         'title': _titleController.text.trim(),
         'facebook_url': _facebookUrlController.text.trim(),
@@ -356,7 +383,9 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Live demarre. Les clients peuvent le voir.')),
+        const SnackBar(
+          content: Text('Live demarre. Les clients peuvent le voir.'),
+        ),
       );
     } catch (error) {
       if (!mounted) return;
@@ -373,13 +402,14 @@ class _LiveShoppingScreenState extends ConsumerState<LiveShoppingScreen> {
     try {
       await Supabase.instance.client
           .from('lives')
-          .update({'is_active': false}).eq('id', liveId);
+          .update({'is_active': false})
+          .eq('id', liveId);
       ref.invalidate(activeLivesProvider);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Live arrete.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Live arrete.')));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -408,12 +438,15 @@ class _ActiveLiveCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFEFFDF5),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0xFF86EFAC)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.radio_button_checked_rounded, color: Color(0xFF16A34A)),
+          const Icon(
+            Icons.radio_button_checked_rounded,
+            color: Color(0xFF16A34A),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -431,15 +464,15 @@ class _ActiveLiveCard extends StatelessWidget {
                     description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Color(0xFF166534), fontSize: 12),
+                    style: const TextStyle(
+                      color: Color(0xFF166534),
+                      fontSize: 12,
+                    ),
                   ),
               ],
             ),
           ),
-          TextButton(
-            onPressed: onStop,
-            child: const Text('Arreter'),
-          ),
+          TextButton(onPressed: onStop, child: const Text('Arreter')),
         ],
       ),
     );
@@ -463,12 +496,12 @@ class _InfoBox extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF7C3AED)),
+          Icon(icon, color: BazzarColors.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: Color(0xFF6B7280)),
+              style: const TextStyle(color: BazzarColors.muted),
             ),
           ),
         ],

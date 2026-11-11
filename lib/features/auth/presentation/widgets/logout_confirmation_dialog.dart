@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -40,7 +41,7 @@ Future<void> confirmSignOut(
                 'Déconnexion',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: BazzarColors.ink,
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                 ),
@@ -50,7 +51,7 @@ Future<void> confirmSignOut(
                 'Voulez-vous vraiment vous déconnecter ?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0xFF6B7280),
+                  color: BazzarColors.muted,
                   fontSize: 14,
                   height: 1.4,
                 ),
@@ -62,11 +63,11 @@ Future<void> confirmSignOut(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(dialogContext).pop(false),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF4B5563),
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        foregroundColor: BazzarColors.body,
+                        side: const BorderSide(color: BazzarColors.border),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: const Text(
@@ -85,7 +86,7 @@ Future<void> confirmSignOut(
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: const Text(

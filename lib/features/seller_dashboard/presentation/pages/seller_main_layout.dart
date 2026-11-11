@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,15 +12,20 @@ class SellerMainLayout extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
-        height: 84,
+        height:
+            84 +
+            MediaQuery.paddingOf(context).bottom +
+            (MediaQuery.textScalerOf(context).scale(12) - 12)
+                .clamp(0, 48)
+                .toDouble(),
         decoration: BoxDecoration(
           color: Colors.white,
           border: const Border(
-            top: BorderSide(color: Color(0xFFE5E7EB), width: 1),
+            top: BorderSide(color: BazzarColors.border, width: 1),
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF111827).withValues(alpha: 0.06),
+              color: BazzarColors.ink.withValues(alpha: 0.06),
               blurRadius: 24,
               offset: const Offset(0, -8),
             ),
@@ -30,11 +36,35 @@ class SellerMainLayout extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(context, 0, Icons.dashboard_rounded, Icons.dashboard_outlined, 'Accueil'),
-              _buildNavItem(context, 1, Icons.inventory_2_rounded, Icons.inventory_2_outlined, 'Produits'),
+              _buildNavItem(
+                context,
+                0,
+                Icons.dashboard_rounded,
+                Icons.dashboard_outlined,
+                'Accueil',
+              ),
+              _buildNavItem(
+                context,
+                1,
+                Icons.inventory_2_rounded,
+                Icons.inventory_2_outlined,
+                'Produits',
+              ),
               _buildCenterGoLiveItem(context),
-              _buildNavItem(context, 3, Icons.receipt_long_rounded, Icons.receipt_long_outlined, 'Commandes'),
-              _buildNavItem(context, 5, Icons.person_rounded, Icons.person_outline_rounded, 'Profil'),
+              _buildNavItem(
+                context,
+                3,
+                Icons.receipt_long_rounded,
+                Icons.receipt_long_outlined,
+                'Commandes',
+              ),
+              _buildNavItem(
+                context,
+                5,
+                Icons.person_rounded,
+                Icons.person_outline_rounded,
+                'Profil',
+              ),
             ],
           ),
         ),
@@ -42,25 +72,37 @@ class SellerMainLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, int index, IconData activeIcon, IconData inactiveIcon, String label) {
+  Widget _buildNavItem(
+    BuildContext context,
+    int index,
+    IconData activeIcon,
+    IconData inactiveIcon,
+    String label,
+  ) {
     final isSelected = navigationShell.currentIndex == index;
-    const Color activeColor = Color(0xFF7C3AED);
-    const Color inactiveColor = Color(0xFF9CA3AF);
+    const Color activeColor = BazzarColors.primary;
+    const Color inactiveColor = Color(0xFF757086);
 
     return Expanded(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
+          onTap: () => navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFF7C3AED).withValues(alpha: 0.1)
+                      ? BazzarColors.primary.withValues(alpha: 0.1)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -75,7 +117,7 @@ class SellerMainLayout extends StatelessWidget {
                 label,
                 style: TextStyle(
                   color: isSelected ? activeColor : inactiveColor,
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
                   letterSpacing: 0,
                 ),
@@ -97,7 +139,10 @@ class SellerMainLayout extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(30),
-            onTap: () => navigationShell.goBranch(2, initialLocation: 2 == navigationShell.currentIndex),
+            onTap: () => navigationShell.goBranch(
+              2,
+              initialLocation: 2 == navigationShell.currentIndex,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -109,7 +154,9 @@ class SellerMainLayout extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFEF4444).withValues(alpha: isSelected ? 0.36 : 0.28),
+                        color: const Color(
+                          0xFFEF4444,
+                        ).withValues(alpha: isSelected ? 0.36 : 0.28),
                         blurRadius: isSelected ? 20 : 16,
                         offset: const Offset(0, 6),
                       ),
@@ -126,7 +173,7 @@ class SellerMainLayout extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 const Text(
-                  'Go Live',
+                  'En direct',
                   style: TextStyle(
                     color: Color(0xFFEF4444),
                     fontSize: 10,

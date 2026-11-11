@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 
 class DashboardCard extends StatelessWidget {
@@ -15,12 +16,15 @@ class DashboardCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF111827).withValues(alpha: 0.04),
+            color: BazzarColors.ink.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),

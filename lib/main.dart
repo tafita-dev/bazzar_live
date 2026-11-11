@@ -54,7 +54,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       title: 'Bazzar Live',
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      // The redesigned screens share a light surface palette; immersive camera
+      // and video surfaces define their own dark backgrounds.
+      themeMode: ThemeMode.light,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       // Wrap builder to overlay the SplashScreen when loading

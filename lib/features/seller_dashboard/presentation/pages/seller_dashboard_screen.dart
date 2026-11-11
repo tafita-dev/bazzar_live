@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,10 +16,10 @@ class SellerDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sellerId = Supabase.instance.client.auth.currentUser?.id ?? '';
-    
+
     // Souscription pour le temps réel
     ref.watch(dashboardRealtimeProvider(sellerId));
-    
+
     final statsAsync = ref.watch(dashboardStatsProvider(sellerId));
     final profileAsync = ref.watch(profileProvider(sellerId));
     final ordersAsync = ref.watch(sellerOrdersProvider(sellerId));
@@ -27,34 +28,40 @@ class SellerDashboardScreen extends ConsumerWidget {
     final avatarUrl = profileAsync.value?.avatarUrl;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: const Color(0xFFF8F7FC),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        shape: const Border(
-          bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1),
-        ),
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Color(0xFF111827)),
+            icon: const Icon(Icons.menu, color: BazzarColors.ink),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
+
         title: const Text(
           'Tableau de bord',
           style: TextStyle(
-            color: Color(0xFF111827),
+            color: BazzarColors.ink,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
+
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
               radius: 18,
-              backgroundColor: Color(0xFFF3F4F6),
+              backgroundColor: BazzarColors.soft,
               backgroundImage: NetworkImage(
                 avatarUrl ??
                     'https://api.dicebear.com/7.x/adventurer/png?seed=$sellerName',
@@ -66,7 +73,7 @@ class SellerDashboardScreen extends ConsumerWidget {
       drawer: SellerAppDrawer(sellerId: sellerId),
       body: statsAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+          child: CircularProgressIndicator(color: BazzarColors.primary),
         ),
         error: (err, stack) => Center(child: Text('Erreur: $err')),
         data: (stats) => SingleChildScrollView(
@@ -80,11 +87,11 @@ class SellerDashboardScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: BazzarColors.border),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF111827).withValues(alpha: 0.04),
+                      color: BazzarColors.ink.withValues(alpha: 0.04),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -102,7 +109,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                               Text(
                                 'Bonjour, $sellerName 👋',
                                 style: const TextStyle(
-                                  color: Color(0xFF111827),
+                                  color: BazzarColors.ink,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 0,
@@ -112,7 +119,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                               const Text(
                                 'Pilotez votre boutique et vos diffusions en direct.',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: BazzarColors.muted,
                                   fontSize: 13,
                                 ),
                               ),
@@ -123,12 +130,12 @@ class SellerDashboardScreen extends ConsumerWidget {
                           width: 52,
                           height: 52,
                           decoration: BoxDecoration(
-                            color: Color(0xFF7C3AED).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(14),
+                            color: BazzarColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Icon(
                             Icons.insights_rounded,
-                            color: Color(0xFF7C3AED),
+                            color: BazzarColors.primary,
                             size: 28,
                           ),
                         ),
@@ -141,15 +148,22 @@ class SellerDashboardScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(10),
                         onTap: () => context.go('/seller/live_shopping'),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF7C3AED),
+                            color: BazzarColors.primary,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.videocam_rounded, color: Colors.white, size: 18),
+                              Icon(
+                                Icons.videocam_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
                               SizedBox(width: 8),
                               Text(
                                 'Démarrer un Live',
@@ -160,7 +174,11 @@ class SellerDashboardScreen extends ConsumerWidget {
                                 ),
                               ),
                               SizedBox(width: 4),
-                              Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 14),
+                              Icon(
+                                Icons.arrow_forward_rounded,
+                                color: Colors.white,
+                                size: 14,
+                              ),
                             ],
                           ),
                         ),
@@ -182,7 +200,12 @@ class SellerDashboardScreen extends ConsumerWidget {
                 children: [
                   _buildKpiCard(
                     title: 'Revenue (Livré)',
-                    value: CurrencyFormatter.format(double.tryParse((stats['total_revenue'] ?? 0).toString()) ?? 0.0),
+                    value: CurrencyFormatter.format(
+                      double.tryParse(
+                            (stats['total_revenue'] ?? 0).toString(),
+                          ) ??
+                          0.0,
+                    ),
                     icon: Icons.account_balance_wallet_rounded,
                     color: const Color(0xFF10B981),
                   ),
@@ -213,7 +236,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  color: BazzarColors.ink,
                 ),
               ),
               const SizedBox(height: 12),
@@ -225,10 +248,26 @@ class SellerDashboardScreen extends ConsumerWidget {
                 crossAxisSpacing: 8,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _buildStatusBadge('En attente', '${stats['pending_orders'] ?? 0}', const Color(0xFFF59E0B)),
-                  _buildStatusBadge('Validée', '${stats['validated_orders'] ?? 0}', const Color(0xFF10B981)),
-                  _buildStatusBadge('En cours', '${stats['in_delivery_orders'] ?? 0}', const Color(0xFF3B82F6)),
-                  _buildStatusBadge('Livrée', '${stats['delivered_orders'] ?? 0}', const Color(0xFF7C3AED)),
+                  _buildStatusBadge(
+                    'En attente',
+                    '${stats['pending_orders'] ?? 0}',
+                    const Color(0xFFF59E0B),
+                  ),
+                  _buildStatusBadge(
+                    'Validée',
+                    '${stats['validated_orders'] ?? 0}',
+                    const Color(0xFF10B981),
+                  ),
+                  _buildStatusBadge(
+                    'En cours',
+                    '${stats['in_delivery_orders'] ?? 0}',
+                    const Color(0xFF3B82F6),
+                  ),
+                  _buildStatusBadge(
+                    'Livrée',
+                    '${stats['delivered_orders'] ?? 0}',
+                    BazzarColors.primary,
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -239,7 +278,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  color: BazzarColors.ink,
                 ),
               ),
               const SizedBox(height: 12),
@@ -259,7 +298,10 @@ class SellerDashboardScreen extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    SalesPerformanceChart(dailySales: (stats['daily_sales'] as List<dynamic>?) ?? []),
+                    SalesPerformanceChart(
+                      dailySales:
+                          (stats['daily_sales'] as List<dynamic>?) ?? [],
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -267,7 +309,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                         return Text(
                           'J-${6 - index}',
                           style: const TextStyle(
-                            color: Color(0xFF9CA3AF),
+                            color: BazzarColors.muted,
                             fontSize: 10,
                           ),
                         );
@@ -287,7 +329,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF111827),
+                      color: BazzarColors.ink,
                     ),
                   ),
                   TextButton(
@@ -297,7 +339,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                     child: const Text(
                       'Voir tout',
                       style: TextStyle(
-                        color: Color(0xFF7C3AED),
+                        color: BazzarColors.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -309,7 +351,7 @@ class SellerDashboardScreen extends ConsumerWidget {
               // 6. Recent Orders List
               ordersAsync.when(
                 loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+                  child: CircularProgressIndicator(color: BazzarColors.primary),
                 ),
                 error: (err, _) => Center(child: Text('Erreur: $err')),
                 data: (orders) {
@@ -319,13 +361,14 @@ class SellerDashboardScreen extends ConsumerWidget {
                       child: Center(
                         child: Text(
                           'Aucune commande récente.',
-                          style: TextStyle(color: Color(0xFF6B7280)),
+                          style: TextStyle(color: BazzarColors.muted),
                         ),
                       ),
                     );
                   }
                   final order = orders.first;
-                  final productsList = order['products'] as List<dynamic>? ?? [];
+                  final productsList =
+                      order['products'] as List<dynamic>? ?? [];
                   if (productsList.isEmpty) {
                     return const SizedBox.shrink();
                   }
@@ -335,10 +378,16 @@ class SellerDashboardScreen extends ConsumerWidget {
                       .toString()
                       .substring(0, min(8, order['id'].toString().length))
                       .toUpperCase();
-                  final productName = (product['name'] ?? product['nom'] ?? 'Produit').toString();
+                  final productName =
+                      (product['name'] ?? product['nom'] ?? 'Produit')
+                          .toString();
                   final status = order['status'] as String? ?? 'pending';
 
-                  final (statusText, statusColor, statusBgColor) = switch (status) {
+                  final (
+                    statusText,
+                    statusColor,
+                    statusBgColor,
+                  ) = switch (status) {
                     'in_delivery' => (
                       'En livraison',
                       const Color(0xFF3B82F6),
@@ -361,12 +410,23 @@ class SellerDashboardScreen extends ConsumerWidget {
                     ),
                   };
 
-                  final price = num.tryParse((product['prix_unitaire'] ?? product['price'] ?? 0).toString()) ?? 0;
-                  final quantity = product['quantité'] as int? ?? product['quantity'] as int? ?? 1;
+                  final price =
+                      num.tryParse(
+                        (product['prix_unitaire'] ?? product['price'] ?? 0)
+                            .toString(),
+                      ) ??
+                      0;
+                  final quantity =
+                      product['quantité'] as int? ??
+                      product['quantity'] as int? ??
+                      1;
                   final totalCardAmount = price * quantity;
 
                   final createdAtStr = order['created_at'] != null
-                      ? DateTime.tryParse(order['created_at'].toString())?.toLocal().toString().split(' ')[0] ?? 'Date inconnue'
+                      ? DateTime.tryParse(
+                              order['created_at'].toString(),
+                            )?.toLocal().toString().split(' ')[0] ??
+                            'Date inconnue'
                       : 'Date inconnue';
 
                   return Container(
@@ -393,14 +453,14 @@ class SellerDashboardScreen extends ConsumerWidget {
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
-                                color: Color(0xFF111827),
+                                color: BazzarColors.ink,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               productName,
                               style: const TextStyle(
-                                color: Color(0xFF6B7280),
+                                color: BazzarColors.muted,
                                 fontSize: 12,
                               ),
                             ),
@@ -408,7 +468,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                             Text(
                               createdAtStr,
                               style: const TextStyle(
-                                color: Color(0xFF9CA3AF),
+                                color: BazzarColors.muted,
                                 fontSize: 11,
                               ),
                             ),
@@ -437,11 +497,13 @@ class SellerDashboardScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              CurrencyFormatter.format(totalCardAmount.toDouble()),
+                              CurrencyFormatter.format(
+                                totalCardAmount.toDouble(),
+                              ),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
-                                color: Color(0xFF111827),
+                                color: BazzarColors.ink,
                               ),
                             ),
                           ],
@@ -470,7 +532,7 @@ class SellerDashboardScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: BazzarColors.soft),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -489,7 +551,7 @@ class SellerDashboardScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -497,7 +559,7 @@ class SellerDashboardScreen extends ConsumerWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  color: Color(0xFF6B7280),
+                  color: BazzarColors.muted,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -509,7 +571,7 @@ class SellerDashboardScreen extends ConsumerWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF111827),
+              color: BazzarColors.ink,
             ),
           ),
         ],
@@ -539,7 +601,7 @@ class SellerDashboardScreen extends ConsumerWidget {
         Text(
           label,
           style: const TextStyle(
-            color: Color(0xFF6B7280),
+            color: BazzarColors.muted,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),

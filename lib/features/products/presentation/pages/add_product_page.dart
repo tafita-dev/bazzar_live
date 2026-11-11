@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,13 +14,17 @@ import '../../data/repositories/product_repository_impl.dart';
 import '../providers/category_provider.dart';
 import 'package:live_shopping/core/providers/supabase_provider.dart';
 import 'package:live_shopping/core/widgets/app_notification.dart';
-import 'package:live_shopping/core/theme/app_theme.dart';
 
 class AddProductPage extends ConsumerStatefulWidget {
   final String sellerId;
   final String? initialCategoryId;
   final Product? productToEdit; // Ajout pour édition
-  const AddProductPage({super.key, required this.sellerId, this.initialCategoryId, this.productToEdit});
+  const AddProductPage({
+    super.key,
+    required this.sellerId,
+    this.initialCategoryId,
+    this.productToEdit,
+  });
 
   @override
   ConsumerState<AddProductPage> createState() => _AddProductPageState();
@@ -30,11 +36,11 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockController = TextEditingController();
-  
+
   String? _imageUrl;
   File? _localImageFile; // For preview
   bool _isUploading = false;
-  
+
   String? _selectedCategoryId;
   bool _isLoading = false;
 
@@ -71,8 +77,14 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     final priceStr = _priceController.text.trim();
     final stockStr = _stockController.text.trim();
 
-    if (name.isEmpty || priceStr.isEmpty || stockStr.isEmpty || _selectedCategoryId == null) {
-      AppNotification.showError(context, 'Veuillez remplir les champs obligatoires');
+    if (name.isEmpty ||
+        priceStr.isEmpty ||
+        stockStr.isEmpty ||
+        _selectedCategoryId == null) {
+      AppNotification.showError(
+        context,
+        'Veuillez remplir les champs obligatoires',
+      );
       return;
     }
 
@@ -80,7 +92,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
 
     final updatedProduct = widget.productToEdit!.copyWith(
       name: name,
-      codeJp: _codeJpController.text.trim().isEmpty ? widget.productToEdit!.codeJp : _codeJpController.text.trim(),
+      codeJp: _codeJpController.text.trim().isEmpty
+          ? widget.productToEdit!.codeJp
+          : _codeJpController.text.trim(),
       description: _descriptionController.text.trim(),
       price: double.parse(priceStr),
       stock: int.parse(stockStr),
@@ -89,22 +103,26 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     );
 
     try {
-      await ProductRepositoryImpl(ref.read(supabaseClientProvider)).updateProduct(updatedProduct);
-      
+      await ProductRepositoryImpl(
+        ref.read(supabaseClientProvider),
+      ).updateProduct(updatedProduct);
+
       ref.invalidate(sellerProductsProvider(widget.sellerId));
-      
+
       if (mounted) {
         context.pop();
         AppNotification.showSuccess(context, 'Produit mis à jour !');
       }
     } catch (e) {
-      if (mounted) AppNotification.showError(context, 'Erreur: ${getFriendlyErrorMessage(e)}');
+      if (mounted)
+        AppNotification.showError(
+          context,
+          'Erreur: ${getFriendlyErrorMessage(e)}',
+        );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
- 
 
   // ... (méthode build à mettre à jour pour utiliser _saveProduct au lieu de _addProduct)
   Future<void> _pickAndUpload(ImageSource source) async {
@@ -114,7 +132,10 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
 
     try {
       final service = ImageCaptureService();
-      final result = await service.pickAndUpload(context: context, source: source);
+      final result = await service.pickAndUpload(
+        context: context,
+        source: source,
+      );
 
       if (result == null) {
         setState(() {
@@ -132,7 +153,10 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
       debugPrint('ERREUR lors de l\'upload: $e');
       setState(() => _isUploading = false);
       if (mounted) {
-        AppNotification.showError(context, 'Erreur d\'upload: ${getFriendlyErrorMessage(e)}');
+        AppNotification.showError(
+          context,
+          'Erreur d\'upload: ${getFriendlyErrorMessage(e)}',
+        );
       }
     }
   }
@@ -161,7 +185,11 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             const SizedBox(height: 20),
             const Text(
               'Ajouter une photo',
-              style: TextStyle(color: Color(0xFF111827), fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: BazzarColors.ink,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -191,7 +219,11 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     );
   }
 
-  Widget _buildSourceButton({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildSourceButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -199,13 +231,20 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+              color: BazzarColors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: const Color(0xFF7C3AED), size: 28),
+            child: Icon(icon, color: BazzarColors.primary, size: 28),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(color: Color(0xFF4B5563), fontSize: 12, fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: BazzarColors.body,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -218,7 +257,10 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
 
     if (name.isEmpty) {
       if (mounted) {
-        AppNotification.showError(context, 'Veuillez entrer le nom du produit.');
+        AppNotification.showError(
+          context,
+          'Veuillez entrer le nom du produit.',
+        );
       }
       return;
     }
@@ -236,16 +278,21 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     }
     if (_selectedCategoryId == null) {
       if (mounted) {
-        AppNotification.showError(context, 'Veuillez sélectionner une catégorie.');
+        AppNotification.showError(
+          context,
+          'Veuillez sélectionner une catégorie.',
+        );
       }
       return;
     }
 
     setState(() => _isLoading = true);
-    
+
     final product = Product(
       id: const Uuid().v4(),
-      codeJp: _codeJpController.text.trim().isEmpty ? 'JP-${const Uuid().v4().substring(0, 4).toUpperCase()}' : _codeJpController.text.trim(),
+      codeJp: _codeJpController.text.trim().isEmpty
+          ? 'JP-${const Uuid().v4().substring(0, 4).toUpperCase()}'
+          : _codeJpController.text.trim(),
       name: name,
       description: _descriptionController.text.trim(),
       price: double.parse(priceStr),
@@ -257,11 +304,13 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     debugPrint('Produit à ajouter: $product');
 
     try {
-      await ProductRepositoryImpl(ref.read(supabaseClientProvider)).createProduct(product);
-      
+      await ProductRepositoryImpl(
+        ref.read(supabaseClientProvider),
+      ).createProduct(product);
+
       ref.invalidate(productsByCategoryProvider(_selectedCategoryId!));
       ref.invalidate(sellerProductsProvider(widget.sellerId));
-      
+
       if (mounted) {
         context.pop();
         AppNotification.showSuccess(context, 'Produit ajouté avec succès !');
@@ -281,21 +330,36 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     final categoriesAsync = ref.watch(categoriesProvider(widget.sellerId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.sunsetAuroraGradient,
-          ),
-        ),
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: BazzarColors.ink,
+          ),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Ajouter un produit',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: Colors.white),
+        title: const BazzarPageTitle(
+          title: Text(
+            'Ajouter un produit',
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 18,
+              color: BazzarColors.ink,
+            ),
+          ),
+          subtitle: 'Présentez votre prochain coup de cœur',
         ),
       ),
       body: SafeArea(
@@ -303,6 +367,12 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             children: [
+              const BazzarIntro(
+                title: 'Donnez envie de découvrir.',
+                description:
+                    'Une belle photo et des informations claires pour présenter votre produit.',
+                icon: Icons.shopping_bag_outlined,
+              ),
               // Image picker area - Refined with rounded corners and gradient
               GestureDetector(
                 onTap: _showImageSourceDialog,
@@ -315,12 +385,12 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: const Color(0xFFE5E7EB),
+                        color: BazzarColors.border,
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                          color: BazzarColors.primary.withValues(alpha: 0.12),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -335,7 +405,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                                 Container(
                                   color: Colors.black38,
                                   child: const Center(
-                                    child: CircularProgressIndicator(color: Colors.white),
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 )
                               else
@@ -345,12 +417,16 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                                   child: Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFF7C3AED),
+                                      color: BazzarColors.primary,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(Icons.edit, color: Colors.white, size: 20),
+                                    child: const Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
                                   ),
-                                )
+                                ),
                             ],
                           )
                         : Column(
@@ -359,15 +435,23 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFEDE9FE),
+                                  color: BazzarColors.lavender,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.add_a_photo_rounded, size: 32, color: Color(0xFF7C3AED)),
+                                child: const Icon(
+                                  Icons.add_a_photo_rounded,
+                                  size: 32,
+                                  color: BazzarColors.primary,
+                                ),
                               ),
                               const SizedBox(height: 12),
                               const Text(
                                 'Ajouter une photo',
-                                style: TextStyle(color: Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  color: BazzarColors.ink,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -389,10 +473,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                       offset: const Offset(0, 8),
                     ),
                   ],
-                  border: Border.all(
-                    color: const Color(0xFFE5E7EB),
-                    width: 1,
-                  ),
+                  border: Border.all(color: BazzarColors.border, width: 1),
                 ),
                 child: Column(
                   children: [
@@ -442,27 +523,44 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                     categoriesAsync.when(
                       loading: () => const SizedBox(
                         height: 56,
-                        child: Center(child: CircularProgressIndicator(color: Color(0xFF7C3AED))),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: BazzarColors.primary,
+                          ),
+                        ),
                       ),
                       error: (err, _) => Text(
                         'Erreur: $err',
-                        style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: 12,
+                        ),
                       ),
                       data: (categories) => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9FAFB),
+                          color: BazzarColors.background,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE5E7EB)),
+                          border: Border.all(color: BazzarColors.border),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButtonFormField<String>(
                             dropdownColor: Colors.white,
-                            style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                            style: const TextStyle(
+                              color: BazzarColors.ink,
+                              fontSize: 14,
+                            ),
                             decoration: const InputDecoration(
                               labelText: 'Catégorie *',
-                              labelStyle: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
-                              prefixIcon: Icon(Icons.category_outlined, color: Color(0xFF7C3AED), size: 20),
+                              labelStyle: TextStyle(
+                                color: BazzarColors.muted,
+                                fontSize: 13,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.category_outlined,
+                                color: BazzarColors.primary,
+                                size: 20,
+                              ),
                               border: InputBorder.none,
                               filled: false,
                             ),
@@ -473,7 +571,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                                 child: Text(cat.name),
                               );
                             }).toList(),
-                            onChanged: (val) => setState(() => _selectedCategoryId = val),
+                            onChanged: (val) =>
+                                setState(() => _selectedCategoryId = val),
                           ),
                         ),
                       ),
@@ -489,7 +588,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                 height: 56,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
+                    backgroundColor: BazzarColors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -501,11 +600,19 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                       ? const SizedBox(
                           width: 24,
                           height: 24,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
                         )
                       : Text(
-                          widget.productToEdit != null ? 'Modifier le produit' : 'Enregistrer le produit',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          widget.productToEdit != null
+                              ? 'Modifier le produit'
+                              : 'Enregistrer le produit',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                 ),
               ),
@@ -530,7 +637,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
         Text(
           labelText,
           style: const TextStyle(
-            color: Color(0xFF374151),
+            color: BazzarColors.body,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -540,11 +647,11 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
-          style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+          style: const TextStyle(color: BazzarColors.ink, fontSize: 14),
           decoration: InputDecoration(
-            prefixIcon: Icon(prefixIcon, color: const Color(0xFF7C3AED), size: 20),
+            prefixIcon: Icon(prefixIcon, color: BazzarColors.primary, size: 20),
             filled: true,
-            fillColor: const Color(0xFFF3F4F6),
+            fillColor: BazzarColors.soft,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
@@ -555,9 +662,15 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1.5),
+              borderSide: const BorderSide(
+                color: BazzarColors.primary,
+                width: 1.5,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
         ),
       ],

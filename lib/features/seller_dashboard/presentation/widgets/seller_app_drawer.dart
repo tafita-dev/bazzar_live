@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +27,10 @@ class SellerAppDrawer extends ConsumerWidget {
 
     return Drawer(
       backgroundColor: Colors.white,
-      elevation: 16,
+      elevation: 0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(28)),
+      ),
       child: Column(
         children: [
           Expanded(
@@ -53,7 +57,10 @@ class SellerAppDrawer extends ConsumerWidget {
                   currentAccountPicture: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.15),
@@ -63,7 +70,8 @@ class SellerAppDrawer extends ConsumerWidget {
                       ],
                     ),
                     child: _DrawerAvatar(
-                      imageUrl: avatarUrl ??
+                      imageUrl:
+                          avatarUrl ??
                           'https://api.dicebear.com/7.x/adventurer/png?seed=$sellerName',
                       fallbackIcon: Icons.storefront_rounded,
                       onTap: () => _navigateTo(context, '/seller/profile'),
@@ -85,7 +93,7 @@ class SellerAppDrawer extends ConsumerWidget {
                       ),
                       _buildDrawerItem(
                         icon: Icons.shopping_bag_rounded,
-                        title: 'Mes Produits',
+                        title: 'Mes produits',
                         onTap: () => _navigateTo(context, '/seller/products'),
                       ),
                       _buildDrawerItem(
@@ -96,11 +104,12 @@ class SellerAppDrawer extends ConsumerWidget {
                       _buildDrawerItem(
                         icon: Icons.live_tv_rounded,
                         title: 'Live Shopping',
-                        onTap: () => _navigateTo(context, '/seller/live_shopping'),
+                        onTap: () =>
+                            _navigateTo(context, '/seller/live_shopping'),
                       ),
                       _buildDrawerItem(
                         icon: Icons.delivery_dining_rounded,
-                        title: 'Mes Livreurs',
+                        title: 'Mes livreurs',
                         onTap: () => _navigateTo(context, '/seller/deliverers'),
                       ),
                       _buildDrawerItem(
@@ -137,15 +146,16 @@ class SellerAppDrawer extends ConsumerWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    Color textColor = const Color(0xFF1E1E2D),
-    Color iconColor = const Color(0xFF6B7280),
+    Color textColor = BazzarColors.ink,
+    Color iconColor = BazzarColors.muted,
   }) {
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        dense: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        dense: false,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: Icon(icon, color: iconColor, size: 22),
         title: Text(
           title,
@@ -186,7 +196,7 @@ class _DrawerAvatar extends StatelessWidget {
           onTap: onTap,
           child: Ink(
             decoration: const BoxDecoration(
-              color: Color(0xFFF3F4F6),
+              color: BazzarColors.soft,
               shape: BoxShape.circle,
             ),
             child: ClipOval(
@@ -196,11 +206,8 @@ class _DrawerAvatar extends StatelessWidget {
                 height: 72,
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
-                errorBuilder: (_, __, ___) => Icon(
-                  fallbackIcon,
-                  color: const Color(0xFF6B7280),
-                  size: 34,
-                ),
+                errorBuilder: (_, __, ___) =>
+                    Icon(fallbackIcon, color: BazzarColors.muted, size: 34),
               ),
             ),
           ),

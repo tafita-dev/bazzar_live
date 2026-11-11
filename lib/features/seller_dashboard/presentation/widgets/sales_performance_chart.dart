@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:live_shopping/core/utils/currency_formatter.dart';
@@ -13,7 +14,10 @@ class SalesPerformanceChart extends StatelessWidget {
     final spots = dailySales.asMap().entries.map((entry) {
       final index = entry.key.toDouble();
       final revenue = double.parse(entry.value['revenue'].toString());
-      return FlSpot(index, revenue / 1000); // Mise à l'échelle (ex: en milliers)
+      return FlSpot(
+        index,
+        revenue / 1000,
+      ); // Mise à l'échelle (ex: en milliers)
     }).toList();
 
     final maxY = spots.map((e) => e.y).reduce((a, b) => a > b ? a : b) + 1;
@@ -26,18 +30,11 @@ class SalesPerformanceChart extends StatelessWidget {
             show: true,
             drawVerticalLine: false,
             getDrawingHorizontalLine: (value) {
-              return const FlLine(
-                color: Color(0xFFF3F4F6),
-                strokeWidth: 1,
-              );
+              return const FlLine(color: BazzarColors.soft, strokeWidth: 1);
             },
           ),
-          titlesData: const FlTitlesData(
-            show: false,
-          ),
-          borderData: FlBorderData(
-            show: false,
-          ),
+          titlesData: const FlTitlesData(show: false),
+          borderData: FlBorderData(show: false),
           minX: 0,
           maxX: 6,
           minY: 0,
@@ -45,11 +42,13 @@ class SalesPerformanceChart extends StatelessWidget {
           lineTouchData: LineTouchData(
             enabled: true,
             touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (touchedSpot) => const Color(0xFF7C3AED),
+              getTooltipColor: (touchedSpot) => BazzarColors.primary,
               tooltipBorderRadius: BorderRadius.circular(8),
               getTooltipItems: (touchedSpots) {
                 return touchedSpots.map((LineBarSpot touchedSpot) {
-                  final revenue = double.parse(dailySales[touchedSpot.x.toInt()]['revenue'].toString());
+                  final revenue = double.parse(
+                    dailySales[touchedSpot.x.toInt()]['revenue'].toString(),
+                  );
                   return LineTooltipItem(
                     CurrencyFormatter.format(revenue),
                     const TextStyle(
@@ -66,7 +65,7 @@ class SalesPerformanceChart extends StatelessWidget {
             LineChartBarData(
               spots: spots,
               isCurved: true,
-              color: const Color(0xFF7C3AED),
+              color: BazzarColors.primary,
               barWidth: 3.5,
               isStrokeCapRound: true,
               dotData: FlDotData(
@@ -74,7 +73,7 @@ class SalesPerformanceChart extends StatelessWidget {
                 getDotPainter: (spot, percent, barData, index) {
                   return FlDotCirclePainter(
                     radius: 4,
-                    color: const Color(0xFF7C3AED),
+                    color: BazzarColors.primary,
                     strokeWidth: 2,
                     strokeColor: Colors.white,
                   );
@@ -84,8 +83,8 @@ class SalesPerformanceChart extends StatelessWidget {
                 show: true,
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF7C3AED).withValues(alpha: 0.28),
-                    const Color(0xFF7C3AED).withValues(alpha: 0.0),
+                    BazzarColors.primary.withValues(alpha: 0.28),
+                    BazzarColors.primary.withValues(alpha: 0.0),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

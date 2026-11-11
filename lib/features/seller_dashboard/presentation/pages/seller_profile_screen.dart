@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -58,7 +60,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
 
   void _fillForm(UserProfile? profile) {
     if (profile == null) return;
-    
+
     // Only update fields if not currently editing to prevent overriding user input
     if (!_isEditing) {
       _resetForm(profile);
@@ -80,7 +82,10 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     setState(() => _isUploading = true);
 
     final service = ImageCaptureService();
-    final result = await service.pickAndUpload(context: context, source: source);
+    final result = await service.pickAndUpload(
+      context: context,
+      source: source,
+    );
 
     if (result == null) {
       setState(() => _isUploading = false);
@@ -105,7 +110,10 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     } catch (e) {
       debugPrint('ERREUR lors de la mise à jour profil: $e');
       if (mounted) {
-        AppNotification.showError(context, 'Erreur mise à jour profil: ${getFriendlyErrorMessage(e)}');
+        AppNotification.showError(
+          context,
+          'Erreur mise à jour profil: ${getFriendlyErrorMessage(e)}',
+        );
       }
     }
   }
@@ -154,7 +162,10 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
 
   Future<void> _saveProfile() async {
     if (_isUploading) {
-      AppNotification.showError(context, 'Veuillez attendre la fin de l\'envoi de la photo.');
+      AppNotification.showError(
+        context,
+        'Veuillez attendre la fin de l\'envoi de la photo.',
+      );
       return;
     }
 
@@ -162,7 +173,9 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
   }
 
   Future<void> _saveProfileChanges({required bool closeEditor}) async {
-    final isSeller = _isSellerRole(ref.read(profileProvider(widget.sellerId)).value?.role);
+    final isSeller = _isSellerRole(
+      ref.read(profileProvider(widget.sellerId)).value?.role,
+    );
 
     setState(() => _isSaving = true);
     try {
@@ -188,7 +201,10 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
       AppNotification.showSuccess(context, 'Profil mis a jour avec succes.');
     } catch (e) {
       if (!mounted) return;
-      AppNotification.showError(context, 'Erreur: ${getFriendlyErrorMessage(e)}');
+      AppNotification.showError(
+        context,
+        'Erreur: ${getFriendlyErrorMessage(e)}',
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -209,28 +225,29 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     final profileAsync = ref.watch(profileProvider(widget.sellerId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+        title: const BazzarPageTitle(
+          title: Text(
+            'Mon Profil',
+            style: TextStyle(
+              color: BazzarColors.ink,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
           ),
+          subtitle: 'Vos informations personnelles',
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Mon Profil',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
+
         leading: IconButton(
           tooltip: 'Retour',
           icon: const Icon(Icons.arrow_back_rounded),
@@ -242,11 +259,10 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
             }
           },
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: profileAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+          child: CircularProgressIndicator(color: BazzarColors.primary),
         ),
         error: (err, _) => Center(child: Text('Erreur: $err')),
         data: (profile) {
@@ -285,7 +301,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                             : 'Enregistrer les informations',
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7C3AED),
+                        backgroundColor: BazzarColors.primary,
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -343,7 +359,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -364,7 +380,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF181630), Color(0xFF7C3AED)],
+                    colors: [Color(0xFF181630), BazzarColors.primary],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -386,7 +402,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                   style: const TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -395,7 +411,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF6B7280),
+                    color: BazzarColors.muted,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -431,15 +447,15 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                     label: Text(_isEditing ? 'Annuler' : 'Modifier le profil'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _isEditing
-                          ? const Color(0xFFF3F4F6)
-                          : const Color(0xFF7C3AED),
+                          ? BazzarColors.soft
+                          : BazzarColors.primary,
                       foregroundColor: _isEditing
-                          ? const Color(0xFF111827)
+                          ? BazzarColors.ink
                           : Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 13),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                   ),
@@ -457,18 +473,18 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: BazzarColors.soft,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 15, color: const Color(0xFF7C3AED)),
+          Icon(icon, size: 15, color: BazzarColors.primary),
           const SizedBox(width: 6),
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF374151),
+              color: BazzarColors.body,
               fontSize: 12,
               fontWeight: FontWeight.w700,
             ),
@@ -502,7 +518,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
           const Text(
             'A propos',
             style: TextStyle(
-              color: Color(0xFF111827),
+              color: BazzarColors.ink,
               fontSize: 16,
               fontWeight: FontWeight.w800,
             ),
@@ -537,7 +553,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
             Text(
               description,
               style: const TextStyle(
-                color: Color(0xFF374151),
+                color: BazzarColors.body,
                 fontSize: 14,
                 height: 1.45,
               ),
@@ -558,13 +574,13 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 21, color: const Color(0xFF6B7280)),
+          Icon(icon, size: 21, color: BazzarColors.muted),
           const SizedBox(width: 10),
           Expanded(
             child: RichText(
               text: TextSpan(
                 style: const TextStyle(
-                  color: Color(0xFF374151),
+                  color: BazzarColors.body,
                   fontSize: 14,
                   height: 1.35,
                 ),
@@ -646,10 +662,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                         offset: const Offset(0, 4),
                       ),
                     ],
-                    border: Border.all(
-                      color: const Color(0xFF7C3AED),
-                      width: 3,
-                    ),
+                    border: Border.all(color: BazzarColors.primary, width: 3),
                   ),
                   child: ClipOval(
                     child: _localAvatarFile != null
@@ -682,7 +695,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                       ),
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF7C3AED),
+                          color: BazzarColors.primary,
                         ),
                       ),
                     ),
@@ -690,7 +703,7 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF7C3AED),
+                    color: BazzarColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -789,20 +802,20 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+      style: const TextStyle(color: BazzarColors.ink, fontSize: 14),
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
-        prefixIcon: Icon(prefixIcon, color: const Color(0xFF7C3AED), size: 20),
+        labelStyle: const TextStyle(color: BazzarColors.muted, fontSize: 13),
+        prefixIcon: Icon(prefixIcon, color: BazzarColors.primary, size: 20),
         filled: true,
-        fillColor: const Color(0xFFF3F4F6),
+        fillColor: BazzarColors.soft,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1.4),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: BazzarColors.primary, width: 1.4),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -828,16 +841,16 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                color: BazzarColors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: const Color(0xFF7C3AED), size: 26),
+              child: Icon(icon, color: BazzarColors.primary, size: 26),
             ),
             const SizedBox(height: 8),
             Text(
               label,
               style: const TextStyle(
-                color: Color(0xFF4B5563),
+                color: BazzarColors.body,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),

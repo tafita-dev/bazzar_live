@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,32 +8,32 @@ import 'create_livreur_screen.dart';
 class SellerDelivererListScreen extends ConsumerWidget {
   final String sellerId;
 
-  const SellerDelivererListScreen({
-    super.key,
-    required this.sellerId,
-  });
+  const SellerDelivererListScreen({super.key, required this.sellerId});
 
-  static const Color primary = Color(0xFF7C3AED);
-  static const Color background = Color(0xFFF9FAFB);
-  static const Color dark = Color(0xFF111827);
-  static const Color muted = Color(0xFF6B7280);
-  static const Color border = Color(0xFFE5E7EB);
+  static const Color primary = BazzarColors.primary;
+  static const Color background = BazzarColors.background;
+  static const Color dark = BazzarColors.ink;
+  static const Color muted = BazzarColors.muted;
+  static const Color border = BazzarColors.border;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final deliverersAsync = ref.watch(
-      sellerDeliverersProvider(sellerId),
-    );
+    final deliverersAsync = ref.watch(sellerDeliverersProvider(sellerId));
 
     return Scaffold(
       backgroundColor: background,
 
       appBar: AppBar(
-        backgroundColor: background,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
+        toolbarHeight: 76,
         titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,30 +66,22 @@ class SellerDelivererListScreen extends ConsumerWidget {
           return _ErrorState(
             message: 'Impossible de charger vos livreurs.',
             onRetry: () {
-              ref.invalidate(
-                sellerDeliverersProvider(sellerId),
-              );
+              ref.invalidate(sellerDeliverersProvider(sellerId));
             },
           );
         },
 
         data: (deliverers) {
           if (deliverers.isEmpty) {
-            return _EmptyState(
-              onAdd: () => _openCreateLivreur(context, ref),
-            );
+            return _EmptyState(onAdd: () => _openCreateLivreur(context, ref));
           }
 
           return RefreshIndicator(
             color: primary,
             onRefresh: () async {
-              ref.invalidate(
-                sellerDeliverersProvider(sellerId),
-              );
+              ref.invalidate(sellerDeliverersProvider(sellerId));
 
-              await ref.read(
-                sellerDeliverersProvider(sellerId).future,
-              );
+              await ref.read(sellerDeliverersProvider(sellerId).future);
             },
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(
@@ -96,42 +89,28 @@ class SellerDelivererListScreen extends ConsumerWidget {
               ),
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(
-                    20,
-                    12,
-                    20,
-                    120,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       _buildHeader(deliverers.length),
                       const SizedBox(height: 16),
 
-                      ...List.generate(
-                        deliverers.length,
-                        (index) {
-                          final deliverer = deliverers[index];
+                      ...List.generate(deliverers.length, (index) {
+                        final deliverer = deliverers[index];
 
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 12,
-                            ),
-                            child: _DelivererCard(
-                              deliverer: deliverer,
-                              onEdit: () {
-                                _showComingSoon(context);
-                              },
-                              onDelete: () async {
-                                await _deleteDeliverer(
-                                  context,
-                                  ref,
-                                  deliverer,
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _DelivererCard(
+                            deliverer: deliverer,
+                            onEdit: () {
+                              _showComingSoon(context);
+                            },
+                            onDelete: () async {
+                              await _deleteDeliverer(context, ref, deliverer);
+                            },
+                          ),
+                        );
+                      }),
                     ]),
                   ),
                 ),
@@ -146,22 +125,12 @@ class SellerDelivererListScreen extends ConsumerWidget {
         backgroundColor: primary,
         foregroundColor: Colors.white,
         elevation: 8,
-        extendedPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        icon: const Icon(
-          Icons.add_rounded,
-          size: 22,
-        ),
+        extendedPadding: const EdgeInsets.symmetric(horizontal: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        icon: const Icon(Icons.add_rounded, size: 22),
         label: const Text(
           'Ajouter un livreur',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 14,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
         ),
       ),
     );
@@ -175,9 +144,9 @@ class SellerDelivererListScreen extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF7C3AED),
-            Color(0xFF6D28D9),
-            Color(0xFF7C3AED),
+            BazzarColors.primary,
+            BazzarColors.primaryDark,
+            BazzarColors.primary,
           ],
         ),
         borderRadius: BorderRadius.circular(22),
@@ -232,13 +201,10 @@ class SellerDelivererListScreen extends ConsumerWidget {
           ),
 
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 11,
-              vertical: 7,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.16),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               '$count',
@@ -254,19 +220,12 @@ class SellerDelivererListScreen extends ConsumerWidget {
     );
   }
 
-  void _openCreateLivreur(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  void _openCreateLivreur(BuildContext context, WidgetRef ref) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const CreateLivreurScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const CreateLivreurScreen()),
     ).then((_) {
-      ref.invalidate(
-        sellerDeliverersProvider(sellerId),
-      );
+      ref.invalidate(sellerDeliverersProvider(sellerId));
     });
   }
 
@@ -275,24 +234,17 @@ class SellerDelivererListScreen extends ConsumerWidget {
       SnackBar(
         content: const Row(
           children: [
-            Icon(
-              Icons.info_outline_rounded,
-              color: Colors.white,
-            ),
+            Icon(Icons.info_outline_rounded, color: Colors.white),
             SizedBox(width: 10),
             Expanded(
-              child: Text(
-                'La modification sera disponible prochainement.',
-              ),
+              child: Text('La modification sera disponible prochainement.'),
             ),
           ],
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: dark,
         margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
@@ -345,14 +297,10 @@ class SellerDelivererListScreen extends ConsumerWidget {
 
                 const SizedBox(height: 8),
 
-                Text(
+                const Text(
                   'Cette action retirera ce livreur de votre équipe.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: muted,
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
+                  style: TextStyle(color: muted, fontSize: 13, height: 1.4),
                 ),
 
                 const SizedBox(height: 24),
@@ -362,21 +310,13 @@ class SellerDelivererListScreen extends ConsumerWidget {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          Navigator.pop(
-                            dialogContext,
-                            false,
-                          );
+                          Navigator.pop(dialogContext, false);
                         },
                         style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(
-                            double.infinity,
-                            48,
-                          ),
-                          side: const BorderSide(
-                            color: border,
-                          ),
+                          minimumSize: const Size(double.infinity, 48),
+                          side: const BorderSide(color: border),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: const Text(
@@ -394,29 +334,20 @@ class SellerDelivererListScreen extends ConsumerWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(
-                            dialogContext,
-                            true,
-                          );
+                          Navigator.pop(dialogContext, true);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(0xFFEF4444),
+                          backgroundColor: const Color(0xFFEF4444),
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          minimumSize: const Size(
-                            double.infinity,
-                            48,
-                          ),
+                          minimumSize: const Size(double.infinity, 48),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: const Text(
                           'Supprimer',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
@@ -444,10 +375,7 @@ class SellerDelivererListScreen extends ConsumerWidget {
         SnackBar(
           content: const Row(
             children: [
-              Icon(
-                Icons.check_circle_outline_rounded,
-                color: Colors.white,
-              ),
+              Icon(Icons.check_circle_outline_rounded, color: Colors.white),
               SizedBox(width: 10),
               Text('Livreur supprimé avec succès'),
             ],
@@ -456,27 +384,23 @@ class SellerDelivererListScreen extends ConsumerWidget {
           backgroundColor: const Color(0xFF16A34A),
           margin: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
       );
 
-      ref.invalidate(
-        sellerDeliverersProvider(sellerId),
-      );
+      ref.invalidate(sellerDeliverersProvider(sellerId));
     } catch (e) {
       if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Impossible de supprimer le livreur.',
-          ),
+          content: const Text('Impossible de supprimer le livreur.'),
           behavior: SnackBarBehavior.floating,
           backgroundColor: const Color(0xFFEF4444),
           margin: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
       );
@@ -499,30 +423,26 @@ class _DelivererCard extends StatelessWidget {
     required this.onDelete,
   });
 
-  static const Color dark = Color(0xFF111827);
-  static const Color muted = Color(0xFF6B7280);
-  static const Color border = Color(0xFFE5E7EB);
-  static const Color primary = Color(0xFF7C3AED);
+  static const Color dark = BazzarColors.ink;
+  static const Color muted = BazzarColors.muted;
+  static const Color border = BazzarColors.border;
+  static const Color primary = BazzarColors.primary;
 
   @override
   Widget build(BuildContext context) {
     final hasAvatar =
-        deliverer.avatarUrl != null &&
-        deliverer.avatarUrl!.isNotEmpty;
+        deliverer.avatarUrl != null && deliverer.avatarUrl!.isNotEmpty;
 
-    final name =
-        deliverer.fullName?.trim().isNotEmpty == true
-            ? deliverer.fullName!
-            : 'Sans nom';
+    final name = deliverer.fullName?.trim().isNotEmpty == true
+        ? deliverer.fullName!
+        : 'Sans nom';
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: border,
-        ),
+        border: Border.all(color: border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.035),
@@ -541,7 +461,7 @@ class _DelivererCard extends StatelessWidget {
                 height: 56,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(17),
-                  color: const Color(0xFFEDE9FE),
+                  color: BazzarColors.lavender,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(17),
@@ -574,10 +494,7 @@ class _DelivererCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
-                    ),
+                    border: Border.all(color: Colors.white, width: 2),
                   ),
                   child: Container(
                     decoration: const BoxDecoration(
@@ -612,11 +529,7 @@ class _DelivererCard extends StatelessWidget {
 
                 Row(
                   children: [
-                    const Icon(
-                      Icons.email_outlined,
-                      size: 14,
-                      color: muted,
-                    ),
+                    const Icon(Icons.email_outlined, size: 14, color: muted),
                     const SizedBox(width: 5),
                     Expanded(
                       child: Text(
@@ -647,11 +560,7 @@ class _DelivererCard extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.circle,
-                        size: 7,
-                        color: Color(0xFF22C55E),
-                      ),
+                      Icon(Icons.circle, size: 7, color: Color(0xFF22C55E)),
                       SizedBox(width: 5),
                       Text(
                         'Actif',
@@ -673,15 +582,12 @@ class _DelivererCard extends StatelessWidget {
           /* Menu */
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
-              borderRadius: BorderRadius.circular(12),
+              color: BazzarColors.background,
+              borderRadius: BorderRadius.circular(16),
             ),
             child: PopupMenuButton<String>(
               tooltip: 'Options',
-              icon: const Icon(
-                Icons.more_horiz_rounded,
-                color: muted,
-              ),
+              icon: const Icon(Icons.more_horiz_rounded, color: muted),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -701,11 +607,7 @@ class _DelivererCard extends StatelessWidget {
                     value: 'edit',
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.edit_outlined,
-                          size: 19,
-                          color: dark,
-                        ),
+                        Icon(Icons.edit_outlined, size: 19, color: dark),
                         SizedBox(width: 12),
                         Text(
                           'Modifier',
@@ -755,17 +657,13 @@ class _DelivererCard extends StatelessWidget {
 class _EmptyState extends StatelessWidget {
   final VoidCallback onAdd;
 
-  const _EmptyState({
-    required this.onAdd,
-  });
+  const _EmptyState({required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 32,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -774,16 +672,13 @@ class _EmptyState extends StatelessWidget {
               height: 90,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFEDE9FE),
-                    Color(0xFFE0E7FF),
-                  ],
+                  colors: [BazzarColors.lavender, Color(0xFFE0E7FF)],
                 ),
                 borderRadius: BorderRadius.circular(28),
               ),
               child: const Icon(
                 Icons.local_shipping_outlined,
-                color: Color(0xFF7C3AED),
+                color: BazzarColors.primary,
                 size: 42,
               ),
             ),
@@ -793,7 +688,7 @@ class _EmptyState extends StatelessWidget {
             const Text(
               'Aucun livreur',
               style: TextStyle(
-                color: Color(0xFF111827),
+                color: BazzarColors.ink,
                 fontSize: 21,
                 fontWeight: FontWeight.w800,
               ),
@@ -805,7 +700,7 @@ class _EmptyState extends StatelessWidget {
               'Ajoutez votre premier livreur pour commencer à gérer vos livraisons.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF6B7280),
+                color: BazzarColors.muted,
                 fontSize: 13,
                 height: 1.5,
               ),
@@ -815,15 +710,10 @@ class _EmptyState extends StatelessWidget {
 
             ElevatedButton.icon(
               onPressed: onAdd,
-              icon: const Icon(
-                Icons.add_rounded,
-                size: 20,
-              ),
-              label: const Text(
-                'Ajouter un livreur',
-              ),
+              icon: const Icon(Icons.add_rounded, size: 20),
+              label: const Text('Ajouter un livreur'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7C3AED),
+                backgroundColor: BazzarColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(
@@ -831,7 +721,7 @@ class _EmptyState extends StatelessWidget {
                   vertical: 14,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
@@ -866,9 +756,7 @@ class _LoadingState extends StatelessWidget {
           4,
           (index) => Container(
             height: 96,
-            margin: const EdgeInsets.only(
-              bottom: 12,
-            ),
+            margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -888,10 +776,7 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorState({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -920,7 +805,7 @@ class _ErrorState extends StatelessWidget {
             const Text(
               'Une erreur est survenue',
               style: TextStyle(
-                color: Color(0xFF111827),
+                color: BazzarColors.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -931,10 +816,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF6B7280),
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: BazzarColors.muted, fontSize: 13),
             ),
 
             const SizedBox(height: 20),
@@ -942,18 +824,16 @@ class _ErrorState extends StatelessWidget {
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7C3AED),
+                backgroundColor: BazzarColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
               child: const Text(
                 'Réessayer',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
           ],

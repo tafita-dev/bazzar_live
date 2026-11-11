@@ -1,4 +1,6 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:live_shopping/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,13 +17,12 @@ class ClientHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
-  static const _ink = Color(0xFF101828);
-  static const _muted = Color(0xFF667085);
-  static const _line = Color(0xFFE6E8EC);
+  static const _ink = BazzarColors.ink;
+  static const _muted = BazzarColors.muted;
+  static const _line = BazzarColors.border;
   static const _surface = Color(0xFFFFFFFF);
-  static const _background = Color(0xFFF4F6F8);
-  static const _gold = Color(0xFFB7791F);
-  static const _accent = Color(0xFF2563EB);
+  static const _background = AppTheme.bgLight;
+  static const _accent = AppTheme.primaryColor;
 
   RealtimeChannel? _realtimeChannel;
   String _selectedFilter = 'Tous';
@@ -109,12 +110,14 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
                   ),
                 ),
               ),
-              error: (error, _) => SliverToBoxAdapter(
+              error: (_, __) => SliverToBoxAdapter(
                 child: _MessagePanel(
                   icon: Icons.error_outline_rounded,
                   title: 'Impossible de charger le fil',
-                  message: '$error',
+                  message:
+                      'Les lives ne sont pas disponibles pour le moment. Vérifiez votre connexion puis réessayez.',
                   color: const Color(0xFFDC2626),
+                  onRetry: () => ref.invalidate(allLivesProvider),
                 ),
               ),
               data: (lives) {
@@ -133,7 +136,7 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
                 }
 
                 return SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 20),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final live = filteredLives[index];
@@ -166,14 +169,14 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
       centerTitle: false,
       toolbarHeight: 64,
       shape: const Border(bottom: BorderSide(color: _line)),
-      titleSpacing: 14,
+      titleSpacing: 20,
       title: Row(
         children: [
           Container(
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: _ink,
+              gradient: AppTheme.primaryGradient,
               borderRadius: BorderRadius.circular(11),
             ),
             child: const Icon(
@@ -196,32 +199,9 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4D6),
-              borderRadius: BorderRadius.circular(7),
-              border: Border.all(color: const Color(0xFFF2D18B)),
-            ),
-            child: const Text(
-              'PREMIUM',
-              style: TextStyle(
-                color: _gold,
-                fontSize: 9,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.7,
-              ),
-            ),
-          ),
         ],
       ),
       actions: [
-        _RoundIconButton(icon: Icons.search_rounded, onPressed: () {}),
-        _RoundIconButton(
-          icon: Icons.notifications_none_rounded,
-          onPressed: () {},
-        ),
         _RoundIconButton(
           icon: Icons.refresh_rounded,
           onPressed: () {
@@ -271,7 +251,7 @@ class _TopSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -280,11 +260,11 @@ class _TopSection extends StatelessWidget {
           _Filters(selectedFilter: selectedFilter, onChanged: onFilterChanged),
           const SizedBox(height: 16),
           const Text(
-            'Fil premium',
+            'À découvrir',
             style: TextStyle(
               color: _ClientHomeScreenState._ink,
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
               letterSpacing: 0,
             ),
           ),
@@ -302,76 +282,61 @@ class _WelcomeBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(18, 18, 14, 18),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF111827), Color(0xFF26334A)],
+          colors: [Color(0xFF30205C), BazzarColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF111827).withValues(alpha: 0.16),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: AppTheme.softShadow(
+          color: AppTheme.primaryColor,
+          opacity: 0.14,
+        ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.white.withValues(alpha: 0.14),
-            child: Text(
-              displayName.characters.first.toUpperCase(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          Row(
+            children: [
+              Expanded(
+                child: Text(
                   'Bonjour $displayName',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    color: Color(0xFFE9DDFB),
+                    fontSize: 14,
+                    height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Les meilleures offres vous attendent',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.72),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+              ),
+              const SizedBox(width: 12),
+              const Icon(
+                Icons.auto_awesome_rounded,
+                color: Color(0xFFF6CC78),
+                size: 28,
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Vos envies.\nEn direct.',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              height: 1.1,
+              letterSpacing: -0.8,
             ),
           ),
-          const SizedBox(width: 10),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF59E0B),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.bolt_rounded,
-              color: Colors.white,
-              size: 24,
+          const SizedBox(height: 12),
+          const Text(
+            'Découvrez les boutiques et leurs nouveautés en vidéo.',
+            style: TextStyle(
+              color: Color(0xFFE9DDFB),
+              fontSize: 14,
+              height: 1.5,
             ),
           ),
         ],
@@ -394,65 +359,36 @@ class _Filters extends StatelessWidget {
       ('Replays', Icons.history_rounded),
     ];
 
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFECEFF3),
-        borderRadius: BorderRadius.circular(24),
-      ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       child: Row(
         children: filters.map((filter) {
-          final isSelected = selectedFilter == filter.$1;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onChanged(filter.$1),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                height: 40,
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      filter.$2,
-                      size: 17,
-                      color: isSelected
-                          ? _ClientHomeScreenState._ink
-                          : _ClientHomeScreenState._muted,
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        filter.$1,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: isSelected
-                              ? _ClientHomeScreenState._ink
-                              : _ClientHomeScreenState._muted,
-                          fontSize: 12,
-                          fontWeight: isSelected
-                              ? FontWeight.w900
-                              : FontWeight.w700,
-                          letterSpacing: 0,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+          final selected = selectedFilter == filter.$1;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ChoiceChip(
+              selected: selected,
+              showCheckmark: false,
+              avatar: Icon(
+                filter.$2,
+                size: 18,
+                color: selected ? Colors.white : AppTheme.textMuted,
               ),
+              label: Text(filter.$1),
+              labelStyle: TextStyle(
+                color: selected ? Colors.white : AppTheme.mediumSlate,
+                fontWeight: FontWeight.w700,
+              ),
+              selectedColor: AppTheme.primaryColor,
+              backgroundColor: Colors.white,
+              side: BorderSide(
+                color: selected ? AppTheme.primaryColor : AppTheme.borderLight,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              onSelected: (_) => onChanged(filter.$1),
             ),
           );
         }).toList(),
@@ -470,10 +406,17 @@ class _LivePostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isActive = _ClientHomeScreenState._isActiveLive(live);
-    final title = live.shopName ?? live.sellerName;
+    final shopName = live.shopName?.trim();
+    final sellerName = live.sellerName.trim();
+    final title = shopName != null && shopName.isNotEmpty
+        ? shopName
+        : sellerName.isNotEmpty
+        ? sellerName
+        : 'Boutique';
+    final avatarUrl = live.sellerAvatarUrl?.trim();
 
     return Container(
-      decoration: _premiumDecoration(),
+      decoration: _cardDecoration(),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -482,18 +425,20 @@ class _LivePostCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 23,
-                  backgroundColor: const Color(0xFFEFF6FF),
-                  backgroundImage: live.sellerAvatarUrl != null
-                      ? NetworkImage(live.sellerAvatarUrl!)
-                      : null,
-                  child: live.sellerAvatarUrl == null
-                      ? const Icon(
-                          Icons.storefront_rounded,
-                          color: _ClientHomeScreenState._accent,
-                        )
-                      : null,
+                ClipOval(
+                  child: SizedBox(
+                    width: 46,
+                    height: 46,
+                    child: avatarUrl == null || avatarUrl.isEmpty
+                        ? const _ShopAvatarFallback()
+                        : Image.network(
+                            avatarUrl,
+                            fit: BoxFit.cover,
+                            excludeFromSemantics: true,
+                            errorBuilder: (_, __, ___) =>
+                                const _ShopAvatarFallback(),
+                          ),
+                  ),
                 ),
                 const SizedBox(width: 11),
                 Expanded(
@@ -524,21 +469,15 @@ class _LivePostCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.more_horiz_rounded,
-                    color: _ClientHomeScreenState._muted,
-                  ),
-                ),
               ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
             child: Text(
-              live.title,
+              live.title.trim().isEmpty
+                  ? 'Découvrez cette boutique'
+                  : live.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -549,96 +488,141 @@ class _LivePostCard extends StatelessWidget {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: onTap,
-            child: AspectRatio(
-              aspectRatio: 1.18,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    live.coverImageUrl ??
-                        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: const Color(0xFFECEFF3),
-                        child: const Icon(
-                          Icons.image_not_supported_rounded,
-                          color: _ClientHomeScreenState._muted,
-                          size: 44,
-                        ),
-                      );
-                    },
-                  ),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.04),
-                          Colors.black.withValues(alpha: 0.38),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 14,
-                    top: 14,
-                    child: _StatusPill(isActive: isActive),
-                  ),
-                  Positioned(
-                    right: 14,
-                    bottom: 14,
-                    child: Container(
-                      width: 50,
-                      height: 50,
+          Semantics(
+            button: true,
+            label:
+                '${isActive ? 'Regarder le live' : 'Voir le replay'} de $title',
+            child: InkWell(
+              onTap: onTap,
+              child: AspectRatio(
+                aspectRatio: 1.35,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    _LiveCover(imageUrl: live.coverImageUrl),
+                    DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.18),
-                            blurRadius: 18,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow_rounded,
-                        color: _ClientHomeScreenState._ink,
-                        size: 34,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.04),
+                            Colors.black.withValues(alpha: 0.38),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      left: 14,
+                      top: 14,
+                      child: _StatusPill(isActive: isActive),
+                    ),
+                    Positioned(
+                      right: 14,
+                      bottom: 14,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.18),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: _ClientHomeScreenState._ink,
+                          size: 34,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Row(
-              children: [
-                _ActionButton(
-                  icon: Icons.favorite_border_rounded,
-                  label: 'J’aime',
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: onTap,
+                icon: Icon(
+                  isActive ? Icons.play_arrow_rounded : Icons.replay_rounded,
                 ),
-                _ActionButton(
-                  icon: Icons.chat_bubble_outline_rounded,
-                  label: 'Commenter',
-                ),
-                _ActionButton(
-                  icon: Icons.bookmark_border_rounded,
-                  label: 'Garder',
-                ),
-              ],
+                label: Text(isActive ? 'Regarder le live' : 'Voir le replay'),
+              ),
             ),
           ),
         ],
       ),
     );
   }
+}
+
+class _ShopAvatarFallback extends StatelessWidget {
+  const _ShopAvatarFallback();
+
+  @override
+  Widget build(BuildContext context) => const ColoredBox(
+    color: BazzarColors.lavender,
+    child: Icon(Icons.storefront_rounded, color: BazzarColors.primary),
+  );
+}
+
+class _LiveCover extends StatelessWidget {
+  const _LiveCover({required this.imageUrl});
+
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = imageUrl?.trim();
+    if (url == null || url.isEmpty) return const _CoverFallback();
+
+    return Image.network(
+      url,
+      fit: BoxFit.cover,
+      excludeFromSemantics: true,
+      errorBuilder: (_, __, ___) => const _CoverFallback(),
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return const ColoredBox(
+          color: BazzarColors.soft,
+          child: Center(
+            child: SizedBox(
+              width: 28,
+              height: 28,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                semanticsLabel: 'Chargement de la couverture',
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CoverFallback extends StatelessWidget {
+  const _CoverFallback();
+
+  @override
+  Widget build(BuildContext context) => const DecoratedBox(
+    decoration: BoxDecoration(gradient: BazzarColors.hero),
+    child: Center(
+      child: Padding(
+        padding: EdgeInsets.all(64),
+        child: Icon(Icons.storefront_outlined, color: Colors.white70, size: 64),
+      ),
+    ),
+  );
 }
 
 class _StatusPill extends StatelessWidget {
@@ -654,7 +638,7 @@ class _StatusPill extends StatelessWidget {
         color: isActive
             ? const Color(0xFFDC2626)
             : Colors.black.withValues(alpha: 0.62),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -680,32 +664,6 @@ class _StatusPill extends StatelessWidget {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: TextButton.icon(
-        onPressed: () {},
-        icon: Icon(icon, size: 19),
-        label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-        style: TextButton.styleFrom(
-          foregroundColor: _ClientHomeScreenState._muted,
-          textStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _RoundIconButton extends StatelessWidget {
   const _RoundIconButton({required this.icon, required this.onPressed});
 
@@ -717,11 +675,12 @@ class _RoundIconButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: IconButton(
+        tooltip: 'Actualiser les lives',
         onPressed: onPressed,
         icon: Icon(icon, color: _ClientHomeScreenState._ink),
         style: IconButton.styleFrom(
-          backgroundColor: const Color(0xFFF2F4F7),
-          fixedSize: const Size(40, 40),
+          backgroundColor: BazzarColors.soft,
+          minimumSize: const Size(48, 48),
           shape: const CircleBorder(),
         ),
       ),
@@ -735,20 +694,22 @@ class _MessagePanel extends StatelessWidget {
     required this.title,
     required this.message,
     required this.color,
+    this.onRetry,
   });
 
   final IconData icon;
   final String title;
   final String message;
   final Color color;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(12, 0, 12, 20),
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 24),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 34),
-      decoration: _premiumDecoration(),
+      decoration: _cardDecoration(),
       child: Column(
         children: [
           Container(
@@ -781,16 +742,24 @@ class _MessagePanel extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 20),
+            OutlinedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Réessayer'),
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-BoxDecoration _premiumDecoration() {
+BoxDecoration _cardDecoration() {
   return BoxDecoration(
     color: _ClientHomeScreenState._surface,
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(24),
     border: Border.all(color: _ClientHomeScreenState._line),
     boxShadow: [
       BoxShadow(

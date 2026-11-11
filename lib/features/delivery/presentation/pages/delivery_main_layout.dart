@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,26 +8,30 @@ import '../providers/deliverer_provider.dart';
 class DeliveryMainLayout extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
-  const DeliveryMainLayout({
-    super.key,
-    required this.navigationShell,
-  });
+  const DeliveryMainLayout({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final delivererId = Supabase.instance.client.auth.currentUser?.id ?? '';
-    final activeDeliveriesAsync = ref.watch(delivererActiveDeliveriesProvider(delivererId));
+    final activeDeliveriesAsync = ref.watch(
+      delivererActiveDeliveriesProvider(delivererId),
+    );
     final activeCount = activeDeliveriesAsync.value?.length ?? 0;
 
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
-        height: 76,
+        height:
+            76 +
+            MediaQuery.paddingOf(context).bottom +
+            (MediaQuery.textScalerOf(context).scale(12) - 12)
+                .clamp(0, 48)
+                .toDouble(),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF111827).withValues(alpha: 0.08),
+              color: BazzarColors.ink.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, -4),
             ),
@@ -75,8 +80,8 @@ class DeliveryMainLayout extends ConsumerWidget {
     int badgeCount = 0,
   }) {
     final isSelected = navigationShell.currentIndex == index;
-    const activeTextColor = Color(0xFF7C3AED);
-    const inactiveColor = Color(0xFF9CA3AF);
+    const activeTextColor = BazzarColors.primary;
+    const inactiveColor = Color(0xFF757086);
 
     return Expanded(
       child: Material(
@@ -94,11 +99,17 @@ class DeliveryMainLayout extends ConsumerWidget {
                 children: [
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 220),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       gradient: isSelected
                           ? const LinearGradient(
-                              colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
+                              colors: [
+                                Color(0xFF30205C),
+                                BazzarColors.primaryDark,
+                              ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             )
@@ -108,7 +119,9 @@ class DeliveryMainLayout extends ConsumerWidget {
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: const Color(0xFF7C3AED).withValues(alpha: 0.38),
+                                color: const Color(
+                                  0xFF7C3AED,
+                                ).withValues(alpha: 0.38),
                                 blurRadius: 10,
                                 offset: const Offset(0, 3),
                               ),
@@ -126,7 +139,10 @@ class DeliveryMainLayout extends ConsumerWidget {
                       top: -3,
                       right: 6,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [Color(0xFFEF4444), Color(0xFF8B5CF6)],
@@ -134,13 +150,18 @@ class DeliveryMainLayout extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                              color: const Color(
+                                0xFFEF4444,
+                              ).withValues(alpha: 0.4),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
                           ],
                         ),
-                        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         child: Text(
                           badgeCount > 99 ? '99+' : '$badgeCount',
                           style: const TextStyle(
@@ -159,7 +180,7 @@ class DeliveryMainLayout extends ConsumerWidget {
                 label,
                 style: TextStyle(
                   color: isSelected ? activeTextColor : inactiveColor,
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
                   letterSpacing: 0,
                 ),

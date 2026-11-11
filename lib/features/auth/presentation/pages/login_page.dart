@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,10 +49,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
-      await ref.read(authRepositoryProvider).signIn(
-            email: email,
-            password: password,
-          );
+      await ref
+          .read(authRepositoryProvider)
+          .signIn(email: email, password: password);
 
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -68,7 +68,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F7FF),
+      backgroundColor: BazzarColors.background,
       body: Stack(
         children: [
           Positioned.fill(
@@ -106,7 +106,37 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     children: [
                       _buildBrand(),
                       const SizedBox(height: 26),
-                      _buildLoginForm(),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(color: BazzarColors.border),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Bienvenue',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF30205C),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            const Text(
+                              'Connectez-vous pour retrouver vos boutiques.',
+                              style: TextStyle(
+                                color: BazzarColors.muted,
+                                height: 1.5,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            _buildLoginForm(),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       _buildRegisterButton(),
                       const SizedBox(height: 28),
@@ -127,23 +157,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       children: [
         Image.asset(
           'sary/logo.png',
-          width: 250,
-          height: 220,
+          width: 170,
+          height: 140,
           fit: BoxFit.contain,
           errorBuilder: (_, __, ___) => const Icon(
             Icons.shopping_bag_rounded,
-            color: Color(0xFF6D28D9),
+            color: BazzarColors.primaryDark,
             size: 96,
           ),
         ),
         const SizedBox(height: 2),
         const Text(
-          'Connectez-vous à votre compte',
+          'Le shopping prend vie.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFF7471A6),
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
+            color: Color(0xFF30205C),
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ],
@@ -169,7 +199,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             tooltip: _obscurePassword
                 ? 'Afficher le mot de passe'
                 : 'Masquer le mot de passe',
-            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            onPressed: () =>
+                setState(() => _obscurePassword = !_obscurePassword),
             icon: Icon(
               _obscurePassword
                   ? Icons.visibility_off_outlined
@@ -189,10 +220,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               );
             },
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF6D28D9),
+              foregroundColor: BazzarColors.primaryDark,
               padding: const EdgeInsets.only(top: 12, left: 8),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: const Size(48, 48),
+              tapTargetSize: MaterialTapTargetSize.padded,
             ),
             child: const Text(
               'Mot de passe oublié ?',
@@ -203,16 +234,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
-          height: 58,
           child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF7C3AED), Color(0xFF8B3FF2)],
+                colors: [BazzarColors.primary, Color(0xFF8B3FF2)],
               ),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+                  color: BazzarColors.primary.withValues(alpha: 0.3),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),
@@ -228,7 +258,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 shadowColor: Colors.transparent,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(24),
                 ),
               ),
               child: _isLoading
@@ -251,10 +281,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
         ),
         const SizedBox(height: 25),
-        Row(
+        const Row(
           children: [
-            const Expanded(child: Divider(color: Color(0xFFB9B5D9))),
-            const Padding(
+            Expanded(child: Divider(color: Color(0xFFB9B5D9))),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'ou',
@@ -265,7 +295,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
             ),
-            const Expanded(child: Divider(color: Color(0xFFB9B5D9))),
+            Expanded(child: Divider(color: Color(0xFFB9B5D9))),
           ],
         ),
       ],
@@ -284,24 +314,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      textInputAction: obscureText ? TextInputAction.done : TextInputAction.next,
+      textInputAction: controller == _passwordController
+          ? TextInputAction.done
+          : TextInputAction.next,
+      autofillHints: controller == _passwordController
+          ? const [AutofillHints.password]
+          : const [AutofillHints.email],
+      autocorrect: false,
+      enableSuggestions: controller != _passwordController,
       style: const TextStyle(
         color: Color(0xFF242044),
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
       decoration: InputDecoration(
-        hintText: hintText,
+        labelText: hintText,
         hintStyle: const TextStyle(
-          color: Color(0xFF8885B5),
+          color: BazzarColors.muted,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
-        prefixIcon: Icon(prefixIcon, color: Color(0xFF5F5B91), size: 29),
+        prefixIcon: Icon(prefixIcon, color: const Color(0xFF5F5B91), size: 29),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white.withValues(alpha: 0.85),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 19),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 19,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(19),
           borderSide: const BorderSide(color: Color(0xFFD3CFFF), width: 1.5),
@@ -312,7 +352,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(19),
-          borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
+          borderSide: const BorderSide(color: BazzarColors.primary, width: 2),
         ),
       ),
     );
@@ -324,9 +364,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       height: 60,
       child: OutlinedButton.icon(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const RegisterPage()),
-          );
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const RegisterPage()));
         },
         icon: const Icon(Icons.person_add_alt_1_rounded, size: 28),
         label: const Text(
@@ -337,7 +377,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           foregroundColor: const Color(0xFF6424E8),
           side: const BorderSide(color: Color(0xFF6424E8), width: 1.8),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(24),
           ),
         ),
       ),

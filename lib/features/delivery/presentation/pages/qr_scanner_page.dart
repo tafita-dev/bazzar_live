@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -70,8 +71,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     if (_isProcessing) return;
     setState(() => _isProcessing = true);
 
-    final delivererId =
-        Supabase.instance.client.auth.currentUser?.id ?? '';
+    final delivererId = Supabase.instance.client.auth.currentUser?.id ?? '';
 
     try {
       final supabase = ref.read(supabaseClientProvider);
@@ -98,10 +98,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       }
     } catch (e) {
       if (!mounted) return;
-      AppNotification.showError(
-        context,
-        getFriendlyErrorMessage(e),
-      );
+      AppNotification.showError(context, getFriendlyErrorMessage(e));
       // Réactiver le scan après une pause
       await Future.delayed(const Duration(seconds: 2));
       if (mounted) {
@@ -115,9 +112,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24),
         actionsPadding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
@@ -126,11 +121,14 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
+                color: BazzarColors.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.keyboard_rounded,
-                  color: Color(0xFF7C3AED), size: 22),
+              child: const Icon(
+                Icons.keyboard_rounded,
+                color: BazzarColors.primary,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 12),
             const Text(
@@ -138,7 +136,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF111827),
+                color: BazzarColors.ink,
               ),
             ),
           ],
@@ -149,7 +147,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           children: [
             const Text(
               'Entrez l\'identifiant de la commande ou le code QR :',
-              style: TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.4),
+              style: TextStyle(
+                fontSize: 13,
+                color: BazzarColors.muted,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 14),
             TextField(
@@ -158,20 +160,26 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
               style: const TextStyle(fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 hintText: 'Ex: e4a7... ou code token',
-                hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+                hintStyle: const TextStyle(
+                  color: BazzarColors.muted,
+                  fontSize: 13,
+                ),
                 filled: true,
-                fillColor: const Color(0xFFF9FAFB),
+                fillColor: BazzarColors.background,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: BazzarColors.border),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: BazzarColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1.8),
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(
+                    color: BazzarColors.primary,
+                    width: 1.8,
+                  ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -187,7 +195,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             child: const Text(
               'Annuler',
               style: TextStyle(
-                color: Color(0xFF6B7280),
+                color: BazzarColors.muted,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -201,12 +209,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C3AED),
+              backgroundColor: BazzarColors.primary,
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
             child: const Text(
@@ -221,40 +229,41 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   @override
   Widget build(BuildContext context) {
-    final delivererId =
-        Supabase.instance.client.auth.currentUser?.id ?? '';
+    final delivererId = Supabase.instance.client.auth.currentUser?.id ?? '';
     final profileAsync = ref.watch(profileProvider(delivererId));
-    final delivererName =
-        profileAsync.value?.fullName ?? 'Livreur';
+    final delivererName = profileAsync.value?.fullName ?? 'Livreur';
 
-    final activeDeliveriesAsync =
-        ref.watch(delivererActiveDeliveriesProvider(delivererId));
+    final activeDeliveriesAsync = ref.watch(
+      delivererActiveDeliveriesProvider(delivererId),
+    );
 
     if (_isScannerOpen) {
       return _buildScannerView();
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         title: Row(
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: Colors.white.withValues(alpha: 0.2),
-              child: const Icon(Icons.delivery_dining_rounded,
-                  color: Colors.white, size: 22),
+              backgroundColor: BazzarColors.ink.withValues(alpha: 0.2),
+              child: const Icon(
+                Icons.delivery_dining_rounded,
+                color: BazzarColors.ink,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -264,7 +273,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   const Text(
                     'Espace Livreur',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: BazzarColors.ink,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -272,7 +281,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   Text(
                     'Bonjour, $delivererName',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: BazzarColors.ink.withValues(alpha: 0.85),
                       fontSize: 12,
                     ),
                   ),
@@ -281,16 +290,17 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             ),
           ],
         ),
+
         actions: [
           IconButton(
-            icon: const Icon(Icons.keyboard_rounded, color: Colors.white),
+            icon: const Icon(Icons.keyboard_rounded, color: BazzarColors.ink),
             tooltip: 'Saisie manuelle',
             onPressed: _showManualCodeDialog,
           ),
         ],
       ),
       body: RefreshIndicator(
-        color: const Color(0xFF7C3AED),
+        color: BazzarColors.primary,
         onRefresh: () async {
           ref.invalidate(delivererActiveDeliveriesProvider(delivererId));
         },
@@ -308,14 +318,17 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Livraisons en cours',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF111827),
+                  const Expanded(
+                    child: Text(
+                      'Livraisons en cours',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: BazzarColors.ink,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 12),
                   activeDeliveriesAsync.maybeWhen(
                     data: (list) => Container(
                       padding: const EdgeInsets.symmetric(
@@ -323,13 +336,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        color: BazzarColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
                         '${list.length} en attente',
                         style: const TextStyle(
-                          color: Color(0xFF7C3AED),
+                          color: BazzarColors.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -347,7 +360,8 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   child: Padding(
                     padding: EdgeInsets.all(32.0),
                     child: CircularProgressIndicator(
-                        color: Color(0xFF7C3AED)),
+                      color: BazzarColors.primary,
+                    ),
                   ),
                 ),
                 error: (err, _) => Center(
@@ -365,8 +379,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: deliveries.length,
-                    separatorBuilder: (_, __) =>
-                        const SizedBox(height: 12),
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final delivery = deliveries[index];
                       return _buildActiveDeliveryCard(delivery);
@@ -388,14 +401,14 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF7C3AED), Color(0xFF6D28D9), Color(0xFF7C3AED)],
+          colors: [Color(0xFF30205C), BazzarColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+            color: BazzarColors.primary.withValues(alpha: 0.35),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -428,18 +441,22 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   children: [
                     Row(
                       children: [
-                        const Text(
-                          'Scanner QR Client',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                        const Flexible(
+                          child: Text(
+                            'Scanner QR Client',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 2),
+                            horizontal: 7,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
@@ -483,7 +500,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF7C3AED),
+                foregroundColor: BazzarColors.primary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -503,19 +520,19 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: BazzarColors.soft),
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              color: Color(0xFFF3F4F6),
+              color: BazzarColors.soft,
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.task_alt_rounded,
-              color: Color(0xFF9CA3AF),
+              color: BazzarColors.muted,
               size: 40,
             ),
           ),
@@ -525,7 +542,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              color: BazzarColors.ink,
             ),
           ),
           const SizedBox(height: 6),
@@ -534,7 +551,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
-              color: Color(0xFF6B7280),
+              color: BazzarColors.muted,
               height: 1.4,
             ),
           ),
@@ -544,24 +561,16 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   }
 
   Widget _buildActiveDeliveryCard(Map<String, dynamic> delivery) {
-    final clientInfo =
-        delivery['client_info'] as Map<String, dynamic>? ?? {};
-    final clientName =
-        clientInfo['nom']?.toString() ?? 'Client sans nom';
-    final clientPhone =
-        clientInfo['contact']?.toString() ?? 'Non renseigné';
+    final clientInfo = delivery['client_info'] as Map<String, dynamic>? ?? {};
+    final clientName = clientInfo['nom']?.toString() ?? 'Client sans nom';
+    final clientPhone = clientInfo['contact']?.toString() ?? 'Non renseigné';
     final clientAddress =
         clientInfo['adresse']?.toString() ?? 'Adresse non spécifiée';
 
-    final products =
-        delivery['products'] as List<dynamic>? ?? [];
-    final totalAmount =
-        (delivery['total_amount'] as num?)?.toDouble() ?? 0.0;
-    final orderId = delivery['id']
-            ?.toString()
-            .substring(0, 8)
-            .toUpperCase() ??
-        'N/A';
+    final products = delivery['products'] as List<dynamic>? ?? [];
+    final totalAmount = (delivery['total_amount'] as num?)?.toDouble() ?? 0.0;
+    final orderId =
+        delivery['id']?.toString().substring(0, 8).toUpperCase() ?? 'N/A';
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -591,7 +600,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
+                      color: BazzarColors.soft,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -599,7 +608,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF4B5563),
+                        color: BazzarColors.body,
                       ),
                     ),
                   ),
@@ -629,18 +638,21 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF111827),
+                  color: BazzarColors.ink,
                 ),
               ),
             ],
           ),
-          const Divider(height: 20, color: Color(0xFFF3F4F6)),
+          const Divider(height: 20, color: BazzarColors.soft),
 
           // Infos client
           Row(
             children: [
-              const Icon(Icons.person_rounded,
-                  size: 18, color: Color(0xFF6B7280)),
+              const Icon(
+                Icons.person_rounded,
+                size: 18,
+                color: BazzarColors.muted,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -648,7 +660,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
               ),
@@ -657,30 +669,33 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.phone_rounded,
-                  size: 16, color: Color(0xFF9CA3AF)),
+              const Icon(
+                Icons.phone_rounded,
+                size: 16,
+                color: BazzarColors.muted,
+              ),
               const SizedBox(width: 8),
               Text(
                 clientPhone,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF6B7280),
-                ),
+                style: const TextStyle(fontSize: 13, color: BazzarColors.muted),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.location_on_rounded,
-                  size: 16, color: Color(0xFF9CA3AF)),
+              const Icon(
+                Icons.location_on_rounded,
+                size: 16,
+                color: BazzarColors.muted,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   clientAddress,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF6B7280),
+                    color: BazzarColors.muted,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -691,10 +706,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           const SizedBox(height: 8),
           Text(
             '${products.length} article${products.length > 1 ? 's' : ''}',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF9CA3AF),
-            ),
+            style: const TextStyle(fontSize: 12, color: BazzarColors.muted),
           ),
           const SizedBox(height: 12),
 
@@ -718,11 +730,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7C3AED),
+                backgroundColor: BazzarColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
             ),
@@ -759,7 +771,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 // Top Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -769,14 +783,19 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.close_rounded,
-                              color: Colors.white, size: 24),
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                           onPressed: _closeScanner,
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 6),
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.45),
                           borderRadius: BorderRadius.circular(20),
@@ -787,8 +806,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.qr_code_scanner_rounded,
-                                color: Color(0xFF818CF8), size: 16),
+                            Icon(
+                              Icons.qr_code_scanner_rounded,
+                              color: Color(0xFF818CF8),
+                              size: 16,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Scanner de Livraison',
@@ -806,7 +828,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                           Container(
                             decoration: BoxDecoration(
                               color: _torchEnabled
-                                  ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
+                                  ? const Color(
+                                      0xFFF59E0B,
+                                    ).withValues(alpha: 0.3)
                                   : Colors.black.withValues(alpha: 0.45),
                               shape: BoxShape.circle,
                             ),
@@ -835,8 +859,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
-                              icon: const Icon(Icons.flip_camera_ios_rounded,
-                                  color: Colors.white, size: 20),
+                              icon: const Icon(
+                                Icons.flip_camera_ios_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                               onPressed: () =>
                                   _scannerController?.switchCamera(),
                             ),
@@ -857,7 +884,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                       return CustomPaint(
                         painter: _ScannerOverlayPainter(
                           animationValue: _laserController.value,
-                          primaryColor: const Color(0xFF7C3AED),
+                          primaryColor: BazzarColors.primary,
                           isProcessing: _isProcessing,
                         ),
                         child: Container(
@@ -867,7 +894,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                           child: _isProcessing
                               ? Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 14),
+                                    horizontal: 20,
+                                    vertical: 14,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withValues(alpha: 0.75),
                                     borderRadius: BorderRadius.circular(16),
@@ -911,10 +940,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   padding: const EdgeInsets.symmetric(horizontal: 36),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.1),
                       ),
@@ -922,8 +953,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.info_outline_rounded,
-                            color: Color(0xFF818CF8), size: 16),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: Color(0xFF818CF8),
+                          size: 16,
+                        ),
                         SizedBox(width: 8),
                         Flexible(
                           child: Text(
@@ -948,8 +982,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: TextButton.icon(
                     onPressed: _showManualCodeDialog,
-                    icon: const Icon(Icons.keyboard_rounded,
-                        color: Colors.white, size: 20),
+                    icon: const Icon(
+                      Icons.keyboard_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                     label: const Text(
                       'Saisir le code manuellement',
                       style: TextStyle(
@@ -999,8 +1036,7 @@ class _ScannerOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final strokeColor =
-        isProcessing ? const Color(0xFF10B981) : primaryColor;
+    final strokeColor = isProcessing ? const Color(0xFF10B981) : primaryColor;
     final strokePaint = Paint()
       ..color = strokeColor
       ..style = PaintingStyle.stroke
@@ -1030,8 +1066,11 @@ class _ScannerOverlayPainter extends CustomPainter {
     final pathBL = Path()
       ..moveTo(0, size.height - cornerLength)
       ..lineTo(0, size.height - r)
-      ..arcToPoint(Offset(r, size.height),
-          radius: const Radius.circular(r), clockwise: false)
+      ..arcToPoint(
+        Offset(r, size.height),
+        radius: const Radius.circular(r),
+        clockwise: false,
+      )
       ..lineTo(cornerLength, size.height);
     canvas.drawPath(pathBL, strokePaint);
 
@@ -1039,8 +1078,11 @@ class _ScannerOverlayPainter extends CustomPainter {
     final pathBR = Path()
       ..moveTo(size.width - cornerLength, size.height)
       ..lineTo(size.width - r, size.height)
-      ..arcToPoint(Offset(size.width, size.height - r),
-          radius: const Radius.circular(r), clockwise: false)
+      ..arcToPoint(
+        Offset(size.width, size.height - r),
+        radius: const Radius.circular(r),
+        clockwise: false,
+      )
       ..lineTo(size.width, size.height - cornerLength);
     canvas.drawPath(pathBR, strokePaint);
 

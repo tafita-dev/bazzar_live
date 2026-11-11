@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,7 +41,9 @@ class _ClientReservationsPageState
   }
 
   void _showQrCodeModal(BuildContext context, Reservation r) {
-    final String shortId = r.id.length > 8 ? r.id.substring(0, 8).toUpperCase() : r.id.toUpperCase();
+    final String shortId = r.id.length > 8
+        ? r.id.substring(0, 8).toUpperCase()
+        : r.id.toUpperCase();
 
     showModalBottomSheet(
       context: context,
@@ -68,7 +72,7 @@ class _ClientReservationsPageState
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5E7EB),
+                    color: BazzarColors.border,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -82,12 +86,12 @@ class _ClientReservationsPageState
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
+                      color: BazzarColors.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
                       Icons.qr_code_rounded,
-                      color: Color(0xFF7C3AED),
+                      color: BazzarColors.primary,
                       size: 22,
                     ),
                   ),
@@ -97,7 +101,7 @@ class _ClientReservationsPageState
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF111827),
+                      color: BazzarColors.ink,
                       letterSpacing: 0,
                     ),
                   ),
@@ -118,11 +122,14 @@ class _ClientReservationsPageState
 
               // Order ID pill
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: BazzarColors.soft,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                  border: Border.all(color: BazzarColors.border),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -132,7 +139,7 @@ class _ClientReservationsPageState
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF4B5563),
+                        color: BazzarColors.body,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -148,7 +155,7 @@ class _ClientReservationsPageState
                       child: const Icon(
                         Icons.copy_rounded,
                         size: 14,
-                        color: Color(0xFF7C3AED),
+                        color: BazzarColors.primary,
                       ),
                     ),
                   ],
@@ -163,10 +170,10 @@ class _ClientReservationsPageState
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+                  border: Border.all(color: BazzarColors.border, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.10),
+                      color: BazzarColors.primary.withValues(alpha: 0.10),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -178,11 +185,11 @@ class _ClientReservationsPageState
                   size: 210,
                   eyeStyle: const QrEyeStyle(
                     eyeShape: QrEyeShape.square,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                   dataModuleStyle: const QrDataModuleStyle(
                     dataModuleShape: QrDataModuleShape.square,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
               ),
@@ -195,19 +202,16 @@ class _ClientReservationsPageState
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(modalContext).pop(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF111827),
+                    backgroundColor: BazzarColors.ink,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     elevation: 0,
                   ),
                   child: const Text(
                     'Fermer',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
                   ),
                 ),
               ),
@@ -221,36 +225,38 @@ class _ClientReservationsPageState
 
   @override
   Widget build(BuildContext context) {
-    final reservationsAsync =
-        ref.watch(clientReservationsProvider(widget.clientId));
+    final reservationsAsync = ref.watch(
+      clientReservationsProvider(widget.clientId),
+    );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        title: const Text(
-          'Mes commandes',
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: 18,
-            color: Colors.white,
-            letterSpacing: 0,
-          ),
-        ),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF7C3AED)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+        title: const BazzarPageTitle(
+          title: Text(
+            'Mes commandes',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 18,
+              color: BazzarColors.ink,
+              letterSpacing: 0,
             ),
           ),
+          subtitle: 'Retrouvez chaque étape de vos achats',
         ),
-        elevation: 0,
       ),
       body: reservationsAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+          child: CircularProgressIndicator(color: BazzarColors.primary),
         ),
         error: (e, _) => Center(
           child: Padding(
@@ -268,7 +274,7 @@ class _ClientReservationsPageState
                   'Impossible de charger les réservations\n$e',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: BazzarColors.muted,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -280,10 +286,10 @@ class _ClientReservationsPageState
                   icon: const Icon(Icons.refresh_rounded),
                   label: const Text('Réessayer'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
+                    backgroundColor: BazzarColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                 ),
@@ -329,15 +335,17 @@ class _ClientReservationsPageState
                   .toLowerCase()
                   .contains(q);
               final productMatch = r.products.any((p) {
-                final name = (p['name'] ?? p['title'] ?? '').toString().toLowerCase();
+                final name = (p['name'] ?? p['title'] ?? '')
+                    .toString()
+                    .toLowerCase();
                 return name.contains(q);
               });
               return idMatch || groupMatch || productMatch;
             }).toList();
           }
 
-          return Column(
-            children: [
+          return BazzarCollectionLayout(
+            header: [
               // Top KPI Summary Cards
               _buildKpiSummary(
                 total: totalCount,
@@ -358,36 +366,30 @@ class _ClientReservationsPageState
               ),
 
               const SizedBox(height: 8),
-
-              // Order List
-              Expanded(
-                child: RefreshIndicator(
-                  color: const Color(0xFF7C3AED),
-                  onRefresh: () => ref.refresh(
-                    clientReservationsProvider(widget.clientId).future,
-                  ),
-                  child: filtered.isEmpty
-                      ? _buildEmptyState()
-                      : ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(
-                            parent: BouncingScrollPhysics(),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          itemCount: filtered.length,
-                          itemBuilder: (context, index) => _OrderCard(
-                            reservation: filtered[index],
-                            onShowQr: () => _showQrCodeModal(
-                              context,
-                              filtered[index],
-                            ),
-                          ),
-                        ),
-                ),
-              ),
             ],
+            body: RefreshIndicator(
+              color: BazzarColors.primary,
+              onRefresh: () => ref.refresh(
+                clientReservationsProvider(widget.clientId).future,
+              ),
+              child: filtered.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics(),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) => _OrderCard(
+                        reservation: filtered[index],
+                        onShowQr: () =>
+                            _showQrCodeModal(context, filtered[index]),
+                      ),
+                    ),
+            ),
           );
         },
       ),
@@ -407,7 +409,7 @@ class _ClientReservationsPageState
             child: _buildMetricCard(
               title: 'Total',
               count: total,
-              color: const Color(0xFF7C3AED),
+              color: BazzarColors.primary,
               bgLight: const Color(0xFFFFF1F2),
               icon: Icons.receipt_long_rounded,
               isActive: _filter == 'Toutes',
@@ -422,7 +424,8 @@ class _ClientReservationsPageState
               color: const Color(0xFFF59E0B),
               bgLight: const Color(0xFFFFFBEB),
               icon: Icons.hourglass_top_rounded,
-              isActive: _filter == 'En attente' ||
+              isActive:
+                  _filter == 'En attente' ||
                   _filter == 'Confirmées' ||
                   _filter == 'En livraison',
               onTap: () {
@@ -468,12 +471,14 @@ class _ClientReservationsPageState
           color: isActive ? bgLight : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isActive ? color.withValues(alpha: 0.6) : const Color(0xFFE5E7EB),
+            color: isActive
+                ? color.withValues(alpha: 0.6)
+                : BazzarColors.border,
             width: isActive ? 1.5 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF111827).withValues(alpha: 0.03),
+              color: BazzarColors.ink.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -490,7 +495,7 @@ class _ClientReservationsPageState
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: isActive ? color : const Color(0xFF6B7280),
+                    color: isActive ? color : BazzarColors.muted,
                   ),
                 ),
                 Icon(icon, size: 16, color: color),
@@ -502,7 +507,7 @@ class _ClientReservationsPageState
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
-                color: isActive ? color : const Color(0xFF111827),
+                color: isActive ? color : BazzarColors.ink,
                 letterSpacing: 0,
               ),
             ),
@@ -521,13 +526,13 @@ class _ClientReservationsPageState
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _searchQuery.isNotEmpty
-                ? const Color(0xFF7C3AED)
-                : const Color(0xFFE5E7EB),
+                ? BazzarColors.primary
+                : BazzarColors.border,
             width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF111827).withValues(alpha: 0.03),
+              color: BazzarColors.ink.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -539,25 +544,25 @@ class _ClientReservationsPageState
           style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF111827),
+            color: BazzarColors.ink,
           ),
           decoration: InputDecoration(
             hintText: 'Rechercher par N° commande, article, boutique...',
             hintStyle: const TextStyle(
               fontSize: 12.5,
-              color: Color(0xFF9CA3AF),
+              color: BazzarColors.muted,
               fontWeight: FontWeight.w500,
             ),
             prefixIcon: const Icon(
               Icons.search_rounded,
-              color: Color(0xFF7C3AED),
+              color: BazzarColors.primary,
               size: 20,
             ),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
                     icon: const Icon(
                       Icons.clear_rounded,
-                      color: Color(0xFF6B7280),
+                      color: BazzarColors.muted,
                       size: 18,
                     ),
                     onPressed: () {
@@ -618,23 +623,23 @@ class _ClientReservationsPageState
 
           return InkWell(
             onTap: () => setState(() => _filter = filterName),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF7C3AED) : Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                color: isSelected ? BazzarColors.primary : Colors.white,
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFF7C3AED)
-                      : const Color(0xFFE5E7EB),
+                      ? BazzarColors.primary
+                      : BazzarColors.border,
                   width: 1,
                 ),
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.30),
+                          color: BazzarColors.primary.withValues(alpha: 0.30),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -647,7 +652,7 @@ class _ClientReservationsPageState
                   Text(
                     filterName,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : const Color(0xFF4B5563),
+                      color: isSelected ? Colors.white : BazzarColors.body,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
                     ),
@@ -662,15 +667,13 @@ class _ClientReservationsPageState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? Colors.white.withValues(alpha: 0.25)
-                            : const Color(0xFFF3F4F6),
+                            : BazzarColors.soft,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         countText,
                         style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : const Color(0xFF6B7280),
+                          color: isSelected ? Colors.white : BazzarColors.muted,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
                         ),
@@ -698,15 +701,18 @@ class _ClientReservationsPageState
             Container(
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                color: BazzarColors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.25), width: 2),
+                border: Border.all(
+                  color: BazzarColors.primary.withValues(alpha: 0.25),
+                  width: 2,
+                ),
               ),
               child: Icon(
                 isSearching
                     ? Icons.search_off_rounded
                     : Icons.receipt_long_rounded,
-                color: const Color(0xFF7C3AED),
+                color: BazzarColors.primary,
                 size: 46,
               ),
             ),
@@ -718,7 +724,7 @@ class _ClientReservationsPageState
               style: const TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
-                color: Color(0xFF111827),
+                color: BazzarColors.ink,
               ),
             ),
             const SizedBox(height: 6),
@@ -729,7 +735,7 @@ class _ClientReservationsPageState
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
-                color: Color(0xFF6B7280),
+                color: BazzarColors.muted,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -743,10 +749,10 @@ class _ClientReservationsPageState
                 icon: const Icon(Icons.clear_rounded, size: 16),
                 label: const Text('Réinitialiser la recherche'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF7C3AED),
-                  side: const BorderSide(color: Color(0xFF7C3AED)),
+                  foregroundColor: BazzarColors.primary,
+                  side: const BorderSide(color: BazzarColors.primary),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
               ),
@@ -781,10 +787,7 @@ class _OrderCard extends StatelessWidget {
   final Reservation reservation;
   final VoidCallback onShowQr;
 
-  const _OrderCard({
-    required this.reservation,
-    required this.onShowQr,
-  });
+  const _OrderCard({required this.reservation, required this.onShowQr});
 
   (Color, IconData) _getStatusStyle(String status) {
     switch (status.toLowerCase()) {
@@ -797,11 +800,11 @@ class _OrderCard extends StatelessWidget {
         return (const Color(0xFF3B82F6), Icons.local_shipping_rounded);
       case 'delivered':
       case 'completed':
-        return (const Color(0xFF7C3AED), Icons.check_circle_rounded);
+        return (BazzarColors.primary, Icons.check_circle_rounded);
       case 'cancelled':
         return (const Color(0xFFEF4444), Icons.cancel_rounded);
       default:
-        return (const Color(0xFF6B7280), Icons.info_outline_rounded);
+        return (BazzarColors.muted, Icons.info_outline_rounded);
     }
   }
 
@@ -847,12 +850,9 @@ class _OrderCard extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFFE5E7EB),
-                    width: 1.5,
-                  ),
-                  color: const Color(0xFFF9FAFB),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: BazzarColors.border, width: 1.5),
+                  color: BazzarColors.background,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(11),
@@ -864,7 +864,7 @@ class _OrderCard extends StatelessWidget {
                             child: Icon(
                               Icons.shopping_bag_outlined,
                               size: 22,
-                              color: Color(0xFF9CA3AF),
+                              color: BazzarColors.muted,
                             ),
                           ),
                         )
@@ -872,7 +872,7 @@ class _OrderCard extends StatelessWidget {
                           child: Icon(
                             Icons.shopping_bag_outlined,
                             size: 22,
-                            color: Color(0xFF9CA3AF),
+                            color: BazzarColors.muted,
                           ),
                         ),
                 ),
@@ -887,7 +887,7 @@ class _OrderCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF111827),
+                      color: BazzarColors.ink,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.white, width: 1),
                     ),
@@ -918,21 +918,23 @@ class _OrderCard extends StatelessWidget {
         : '';
 
     final bool canShowQr =
-        r.status == 'validated' || r.status == 'confirmed' || r.status == 'in_delivery';
+        r.status == 'validated' ||
+        r.status == 'confirmed' ||
+        r.status == 'in_delivery';
 
-    const Color primaryBrand = Color(0xFF7C3AED);
-    const Color darkSlate = Color(0xFF111827);
-    const Color lightSlate = Color(0xFFF3F4F6);
+    const Color primaryBrand = BazzarColors.primary;
+    const Color darkSlate = BazzarColors.ink;
+    const Color lightSlate = BazzarColors.soft;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFFF3F4F6), width: 1.5),
+        border: Border.all(color: BazzarColors.soft, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF111827).withValues(alpha: 0.04),
+            color: BazzarColors.ink.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -962,7 +964,7 @@ class _OrderCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF9CA3AF),
+                                color: BazzarColors.muted,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1019,14 +1021,14 @@ class _OrderCard extends StatelessWidget {
                     const Icon(
                       Icons.calendar_today_rounded,
                       size: 13,
-                      color: Color(0xFF9CA3AF),
+                      color: BazzarColors.muted,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       r.createdAt?.toString().split(' ')[0] ?? 'N/A',
                       style: const TextStyle(
                         fontSize: 12.5,
-                        color: Color(0xFF6B7280),
+                        color: BazzarColors.muted,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1034,14 +1036,14 @@ class _OrderCard extends StatelessWidget {
                     const Icon(
                       Icons.shopping_bag_outlined,
                       size: 14,
-                      color: Color(0xFF9CA3AF),
+                      color: BazzarColors.muted,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       '$productCount article(s)',
                       style: const TextStyle(
                         fontSize: 12.5,
-                        color: Color(0xFF6B7280),
+                        color: BazzarColors.muted,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1064,7 +1066,7 @@ class _OrderCard extends StatelessWidget {
                           'Total commande',
                           style: TextStyle(
                             fontSize: 11,
-                            color: Color(0xFF9CA3AF),
+                            color: BazzarColors.muted,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1088,17 +1090,21 @@ class _OrderCard extends StatelessWidget {
                         if (canShowQr) ...[
                           InkWell(
                             onTap: onShowQr,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(12),
+                                color: BazzarColors.primary.withValues(
+                                  alpha: 0.12,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+                                  color: BazzarColors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                 ),
                               ),
                               child: const Row(
@@ -1107,7 +1113,7 @@ class _OrderCard extends StatelessWidget {
                                   Icon(
                                     Icons.qr_code_2_rounded,
                                     size: 16,
-                                    color: Color(0xFF7C3AED),
+                                    color: BazzarColors.primary,
                                   ),
                                   SizedBox(width: 5),
                                   Text(
@@ -1115,7 +1121,7 @@ class _OrderCard extends StatelessWidget {
                                     style: TextStyle(
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
-                                      color: Color(0xFF7C3AED),
+                                      color: BazzarColors.primary,
                                     ),
                                   ),
                                 ],
@@ -1133,7 +1139,7 @@ class _OrderCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: primaryBrand.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,

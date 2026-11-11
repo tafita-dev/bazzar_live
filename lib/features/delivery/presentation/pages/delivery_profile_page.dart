@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,32 +20,32 @@ class DeliveryProfilePage extends ConsumerWidget {
     final stats = ref.watch(delivererStatsProvider(delivererId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+        title: const BazzarPageTitle(
+          title: Text(
+            'Mon Profil',
+            style: TextStyle(
+              color: BazzarColors.ink,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
           ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Mon Profil',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          subtitle: 'Votre compte et votre activité',
         ),
       ),
       body: profileAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+          child: CircularProgressIndicator(color: BazzarColors.primary),
         ),
         error: (err, _) => Center(child: Text('Erreur: $err')),
         data: (profile) {
@@ -103,7 +105,7 @@ class DeliveryProfilePage extends ConsumerWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -120,18 +122,25 @@ class DeliveryProfilePage extends ConsumerWidget {
             height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
-              border: Border.all(color: const Color(0xFF7C3AED), width: 3),
+              color: BazzarColors.primary.withValues(alpha: 0.12),
+              border: Border.all(color: BazzarColors.primary, width: 3),
             ),
             child: ClipOval(
               child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
                   ? Image.network(
                       profile.avatarUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.person, size: 50, color: Color(0xFF7C3AED)),
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.person,
+                        size: 50,
+                        color: BazzarColors.primary,
+                      ),
                     )
-                  : const Icon(Icons.person, size: 50, color: Color(0xFF7C3AED)),
+                  : const Icon(
+                      Icons.person,
+                      size: 50,
+                      color: BazzarColors.primary,
+                    ),
             ),
           ),
           const SizedBox(height: 16),
@@ -140,16 +149,13 @@ class DeliveryProfilePage extends ConsumerWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF111827),
+              color: BazzarColors.ink,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             profile.email,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF6B7280),
-            ),
+            style: const TextStyle(fontSize: 13, color: BazzarColors.muted),
           ),
         ],
       ),
@@ -177,7 +183,7 @@ class DeliveryProfilePage extends ConsumerWidget {
           const Text(
             'Informations',
             style: TextStyle(
-              color: Color(0xFF111827),
+              color: BazzarColors.ink,
               fontSize: 16,
               fontWeight: FontWeight.w800,
             ),
@@ -228,17 +234,20 @@ class DeliveryProfilePage extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                        color: BazzarColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.check_circle_rounded,
-                          size: 16, color: Color(0xFF7C3AED)),
+                      child: const Icon(
+                        Icons.check_circle_rounded,
+                        size: 16,
+                        color: BazzarColors.primary,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     const Text(
                       'Livrées',
                       style: TextStyle(
-                        color: Color(0xFF6B7280),
+                        color: BazzarColors.muted,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -251,7 +260,7 @@ class DeliveryProfilePage extends ConsumerWidget {
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
               ],
@@ -284,14 +293,17 @@ class DeliveryProfilePage extends ConsumerWidget {
                         color: const Color(0xFF10B981).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.payments_rounded,
-                          size: 16, color: Color(0xFF10B981)),
+                      child: const Icon(
+                        Icons.payments_rounded,
+                        size: 16,
+                        color: Color(0xFF10B981),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     const Text(
                       'Encaissé',
                       style: TextStyle(
-                        color: Color(0xFF6B7280),
+                        color: BazzarColors.muted,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -326,22 +338,19 @@ class DeliveryProfilePage extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, size: 21, color: const Color(0xFF6B7280)),
+          Icon(icon, size: 21, color: BazzarColors.muted),
           const SizedBox(width: 10),
           Text(
             '$label : ',
             style: const TextStyle(
-              color: Color(0xFF374151),
+              color: BazzarColors.body,
               fontSize: 14,
               fontWeight: FontWeight.w800,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: Color(0xFF374151),
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: BazzarColors.body, fontSize: 14),
           ),
         ],
       ),

@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -17,13 +19,12 @@ class CreateLivreurScreen extends ConsumerStatefulWidget {
       _CreateLivreurScreenState();
 }
 
-class _CreateLivreurScreenState
-    extends ConsumerState<CreateLivreurScreen> {
-  static const Color primary = Color(0xFF7C3AED);
-  static const Color background = Color(0xFFF9FAFB);
-  static const Color dark = Color(0xFF111827);
-  static const Color muted = Color(0xFF6B7280);
-  static const Color border = Color(0xFFE5E7EB);
+class _CreateLivreurScreenState extends ConsumerState<CreateLivreurScreen> {
+  static const Color primary = BazzarColors.primary;
+  static const Color background = BazzarColors.background;
+  static const Color dark = BazzarColors.ink;
+  static const Color muted = BazzarColors.muted;
+  static const Color border = BazzarColors.border;
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -85,10 +86,7 @@ class _CreateLivreurScreenState
         _isUploading = false;
       });
 
-      AppNotification.showError(
-        context,
-        getFriendlyErrorMessage(e),
-      );
+      AppNotification.showError(context, getFriendlyErrorMessage(e));
     }
   }
 
@@ -102,9 +100,7 @@ class _CreateLivreurScreenState
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 30),
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(30),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -133,10 +129,7 @@ class _CreateLivreurScreenState
 
               const Text(
                 'Choisissez une photo pour le profil',
-                style: TextStyle(
-                  color: muted,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: muted, fontSize: 13),
               ),
 
               const SizedBox(height: 24),
@@ -187,16 +180,11 @@ class _CreateLivreurScreenState
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 18,
-          horizontal: 10,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB),
+          color: BazzarColors.background,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: border,
-          ),
+          border: Border.all(color: border),
         ),
         child: Column(
           children: [
@@ -204,14 +192,10 @@ class _CreateLivreurScreenState
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: const Color(0xFFEDE9FE),
+                color: BazzarColors.lavender,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(
-                icon,
-                color: primary,
-                size: 24,
-              ),
+              child: Icon(icon, color: primary, size: 24),
             ),
 
             const SizedBox(height: 10),
@@ -231,10 +215,7 @@ class _CreateLivreurScreenState
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: muted,
-                fontSize: 10,
-              ),
+              style: const TextStyle(color: muted, fontSize: 10),
             ),
           ],
         ),
@@ -273,9 +254,7 @@ class _CreateLivreurScreenState
     }
 
     if (password.length < 6) {
-      _showError(
-        'Le mot de passe doit contenir au moins 6 caractères.',
-      );
+      _showError('Le mot de passe doit contenir au moins 6 caractères.');
       return false;
     }
 
@@ -290,10 +269,7 @@ class _CreateLivreurScreenState
   void _showError(String message) {
     if (!mounted) return;
 
-    AppNotification.showError(
-      context,
-      message,
-    );
+    AppNotification.showError(context, message);
   }
 
   // ---------------------------------------------------------------------------
@@ -305,9 +281,7 @@ class _CreateLivreurScreenState
 
     if (!_validateForm()) return;
 
-    final notifier = ref.read(
-      delivererNotifierProvider.notifier,
-    );
+    final notifier = ref.read(delivererNotifierProvider.notifier);
 
     try {
       await notifier.createLivreur(
@@ -330,10 +304,7 @@ class _CreateLivreurScreenState
     } catch (e) {
       if (!mounted) return;
 
-      AppNotification.showError(
-        context,
-        getFriendlyErrorMessage(e),
-      );
+      AppNotification.showError(context, getFriendlyErrorMessage(e));
     }
   }
 
@@ -343,9 +314,7 @@ class _CreateLivreurScreenState
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(
-      delivererNotifierProvider,
-    );
+    final state = ref.watch(delivererNotifierProvider);
 
     final isLoading = state.isLoading || _isUploading;
 
@@ -353,42 +322,41 @@ class _CreateLivreurScreenState
       backgroundColor: background,
 
       appBar: AppBar(
-        backgroundColor: background,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
 
         leading: IconButton(
-          onPressed: isLoading
-              ? null
-              : () => Navigator.pop(context),
+          onPressed: isLoading ? null : () => Navigator.pop(context),
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 19,
             color: dark,
           ),
         ),
-
-        title: const Text(
-          'Nouveau livreur',
-          style: TextStyle(
-            color: dark,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
+        title: const BazzarPageTitle(
+          title: Text(
+            'Nouveau livreur',
+            style: TextStyle(
+              color: dark,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
           ),
+          subtitle: 'Un nouveau membre dans votre équipe',
         ),
-
-        centerTitle: false,
       ),
 
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(
-            20,
-            8,
-            20,
-            30,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -438,11 +406,7 @@ class _CreateLivreurScreenState
 
         Text(
           'Créez un compte livreur pour gérer vos livraisons.',
-          style: TextStyle(
-            color: muted,
-            fontSize: 13,
-            height: 1.45,
-          ),
+          style: TextStyle(color: muted, fontSize: 13, height: 1.45),
         ),
       ],
     );
@@ -457,9 +421,7 @@ class _CreateLivreurScreenState
       child: Column(
         children: [
           GestureDetector(
-            onTap: _isUploading
-                ? null
-                : _showImageSourceDialog,
+            onTap: _isUploading ? null : _showImageSourceDialog,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -476,9 +438,7 @@ class _CreateLivreurScreenState
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(
-                          alpha: 0.07,
-                        ),
+                        color: Colors.black.withValues(alpha: 0.07),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -486,12 +446,9 @@ class _CreateLivreurScreenState
                   ),
                   child: ClipOval(
                     child: _localAvatarFile != null
-                        ? Image.file(
-                            _localAvatarFile!,
-                            fit: BoxFit.cover,
-                          )
+                        ? Image.file(_localAvatarFile!, fit: BoxFit.cover)
                         : Container(
-                            color: const Color(0xFFEDE9FE),
+                            color: BazzarColors.lavender,
                             child: const Icon(
                               Icons.person_rounded,
                               color: primary,
@@ -510,15 +467,10 @@ class _CreateLivreurScreenState
                     decoration: BoxDecoration(
                       color: primary,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: background,
-                        width: 3,
-                      ),
+                      border: Border.all(color: background, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: primary.withValues(
-                            alpha: 0.25,
-                          ),
+                          color: primary.withValues(alpha: 0.25),
                           blurRadius: 8,
                         ),
                       ],
@@ -555,13 +507,7 @@ class _CreateLivreurScreenState
 
           const SizedBox(height: 3),
 
-          const Text(
-            'Optionnel',
-            style: TextStyle(
-              color: muted,
-              fontSize: 11,
-            ),
-          ),
+          const Text('Optionnel', style: TextStyle(color: muted, fontSize: 11)),
         ],
       ),
     );
@@ -577,14 +523,10 @@ class _CreateLivreurScreenState
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: border,
-        ),
+        border: Border.all(color: border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(
-              alpha: 0.035,
-            ),
+            color: Colors.black.withValues(alpha: 0.035),
             blurRadius: 24,
             offset: const Offset(0, 7),
           ),
@@ -631,8 +573,7 @@ class _CreateLivreurScreenState
             suffixIcon: IconButton(
               onPressed: () {
                 setState(() {
-                  _obscurePassword =
-                      !_obscurePassword;
+                  _obscurePassword = !_obscurePassword;
                 });
               },
               icon: Icon(
@@ -657,8 +598,7 @@ class _CreateLivreurScreenState
     bool obscure = false,
     Widget? suffixIcon,
     TextInputType? keyboardType,
-    TextCapitalization textCapitalization =
-        TextCapitalization.none,
+    TextCapitalization textCapitalization = TextCapitalization.none,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,48 +626,33 @@ class _CreateLivreurScreenState
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(
-              color: Color(0xFF9CA3AF),
-              fontSize: 13,
-            ),
+            hintStyle: const TextStyle(color: BazzarColors.muted, fontSize: 13),
 
-            prefixIcon: Icon(
-              icon,
-              color: primary,
-              size: 20,
-            ),
+            prefixIcon: Icon(icon, color: primary, size: 20),
 
             suffixIcon: suffixIcon,
 
             filled: true,
-            fillColor: const Color(0xFFF9FAFB),
+            fillColor: BazzarColors.background,
 
-            contentPadding:
-                const EdgeInsets.symmetric(
+            contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,
             ),
 
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(
-                color: border,
-              ),
+              borderSide: const BorderSide(color: border),
             ),
 
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(
-                color: border,
-              ),
+              borderSide: const BorderSide(color: border),
             ),
 
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(
-                color: primary,
-                width: 1.5,
-              ),
+              borderSide: const BorderSide(color: primary, width: 1.5),
             ),
           ),
         ),
@@ -743,11 +668,9 @@ class _CreateLivreurScreenState
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: const Color(0xFFEFF6FF),
+        color: BazzarColors.lavender,
         borderRadius: BorderRadius.circular(17),
-        border: Border.all(
-          color: const Color(0xFFDBEAFE),
-        ),
+        border: Border.all(color: const Color(0xFFDBEAFE)),
       ),
       child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -786,26 +709,19 @@ class _CreateLivreurScreenState
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: isLoading
-            ? null
-            : _createLivreur,
+        onPressed: isLoading ? null : _createLivreur,
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
-          disabledBackgroundColor:
-              primary.withValues(alpha: 0.55),
+          disabledBackgroundColor: primary.withValues(alpha: 0.55),
           foregroundColor: Colors.white,
           elevation: 0,
-          shadowColor: primary.withValues(
-            alpha: 0.30,
-          ),
+          shadowColor: primary.withValues(alpha: 0.30),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
           ),
         ),
         child: AnimatedSwitcher(
-          duration: const Duration(
-            milliseconds: 200,
-          ),
+          duration: const Duration(milliseconds: 200),
           child: isLoading
               ? const SizedBox(
                   key: ValueKey('loading'),
@@ -818,13 +734,9 @@ class _CreateLivreurScreenState
                 )
               : const Row(
                   key: ValueKey('button'),
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.person_add_alt_1_rounded,
-                      size: 20,
-                    ),
+                    Icon(Icons.person_add_alt_1_rounded, size: 20),
                     SizedBox(width: 9),
                     Text(
                       'Créer le livreur',

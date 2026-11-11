@@ -1,3 +1,5 @@
+import 'package:live_shopping/core/widgets/bazzar_ui.dart';
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -31,11 +33,12 @@ class _ReservationDetailsPageState
   bool get _isDelivered => _currentReservation['status'] == 'delivered';
 
   Future<void> _handleConfirmDelivery() async {
-    final delivererId =
-        Supabase.instance.client.auth.currentUser?.id ?? '';
+    final delivererId = Supabase.instance.client.auth.currentUser?.id ?? '';
     if (delivererId.isEmpty) {
       AppNotification.showError(
-          context, 'Vous devez être connecté pour livrer');
+        context,
+        'Vous devez être connecté pour livrer',
+      );
       return;
     }
 
@@ -74,8 +77,9 @@ class _ReservationDetailsPageState
       setState(() {
         _isSubmitting = false;
         _currentReservation['status'] = 'delivered';
-        _currentReservation['delivered_at'] =
-            DateTime.now().toUtc().toIso8601String();
+        _currentReservation['delivered_at'] = DateTime.now()
+            .toUtc()
+            .toIso8601String();
       });
 
       AppNotification.showSuccess(
@@ -102,8 +106,7 @@ class _ReservationDetailsPageState
   Widget build(BuildContext context) {
     final clientInfo =
         _currentReservation['client_info'] as Map<String, dynamic>? ?? {};
-    final products =
-        _currentReservation['products'] as List<dynamic>? ?? [];
+    final products = _currentReservation['products'] as List<dynamic>? ?? [];
     final totalAmount =
         (_currentReservation['total_amount'] as num?)?.toDouble() ?? 0.0;
     final groupName = _currentReservation['group_name'];
@@ -111,47 +114,49 @@ class _ReservationDetailsPageState
         ? (groupName['shop_name'] ?? groupName['name'])?.toString()
         : groupName?.toString();
 
-    final orderId = _currentReservation['id']
-            ?.toString()
-            .substring(0, 8)
-            .toUpperCase() ??
+    final orderId =
+        _currentReservation['id']?.toString().substring(0, 8).toUpperCase() ??
         'N/A';
 
     final isDelivered = _isDelivered;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: BazzarColors.background,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.white, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: BazzarColors.ink,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Commande #$orderId',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+        title: BazzarPageTitle(
+          title: Text(
+            'Commande #$orderId',
+            style: const TextStyle(
+              color: BazzarColors.ink,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
+          subtitle: 'Les informations de votre commande',
         ),
+
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: Center(
-              child: _buildStatusPill(isDelivered),
-            ),
+            child: Center(child: _buildStatusPill(isDelivered)),
           ),
         ],
       ),
@@ -195,14 +200,14 @@ class _ReservationDetailsPageState
     final (label, color, bgColor) = isDelivered
         ? ('Livrée', Colors.white, const Color(0xFF10B981))
         : status == 'in_delivery'
-            ? ('En livraison', Colors.white, const Color(0xFF3B82F6))
-            : ('Validée', Colors.white, const Color(0xFFF59E0B));
+        ? ('En livraison', Colors.white, const Color(0xFF3B82F6))
+        : ('Validée', Colors.white, const Color(0xFFF59E0B));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         label,
@@ -223,17 +228,16 @@ class _ReservationDetailsPageState
         gradient: LinearGradient(
           colors: isDelivered
               ? [const Color(0xFF10B981), const Color(0xFF059669)]
-              : [const Color(0xFF7C3AED), const Color(0xFF6D28D9)],
+              : [BazzarColors.primary, BazzarColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (isDelivered
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFF7C3AED))
-                .withValues(alpha: 0.35),
+            color:
+                (isDelivered ? const Color(0xFF10B981) : BazzarColors.primary)
+                    .withValues(alpha: 0.35),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -248,9 +252,7 @@ class _ReservationDetailsPageState
               shape: BoxShape.circle,
             ),
             child: Icon(
-              isDelivered
-                  ? Icons.check_circle_rounded
-                  : Icons.payments_rounded,
+              isDelivered ? Icons.check_circle_rounded : Icons.payments_rounded,
               color: Colors.white,
               size: 28,
             ),
@@ -291,7 +293,8 @@ class _ReservationDetailsPageState
   Widget _buildClientCard(Map<String, dynamic> clientInfo) {
     final name = clientInfo['nom']?.toString() ?? 'Client sans nom';
     final contact = clientInfo['contact']?.toString() ?? 'Non renseigné';
-    final address = clientInfo['adresse']?.toString() ?? 'Adresse non spécifiée';
+    final address =
+        clientInfo['adresse']?.toString() ?? 'Adresse non spécifiée';
     final remark = clientInfo['remarque']?.toString();
 
     return Container(
@@ -316,12 +319,12 @@ class _ReservationDetailsPageState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                  color: BazzarColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.person_pin_rounded,
-                  color: Color(0xFF7C3AED),
+                  color: BazzarColors.primary,
                   size: 20,
                 ),
               ),
@@ -331,17 +334,13 @@ class _ReservationDetailsPageState
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  color: BazzarColors.ink,
                 ),
               ),
             ],
           ),
-          const Divider(height: 24, color: Color(0xFFF3F4F6)),
-          _buildInfoRow(
-            icon: Icons.person_rounded,
-            title: 'Nom',
-            value: name,
-          ),
+          const Divider(height: 24, color: BazzarColors.soft),
+          _buildInfoRow(icon: Icons.person_rounded, title: 'Nom', value: name),
           const SizedBox(height: 12),
           _buildInfoRow(
             icon: Icons.phone_rounded,
@@ -375,7 +374,7 @@ class _ReservationDetailsPageState
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: BazzarColors.soft),
       ),
       child: Row(
         children: [
@@ -400,7 +399,7 @@ class _ReservationDetailsPageState
                   'Boutique Vendeur',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF6B7280),
+                    color: BazzarColors.muted,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -409,7 +408,7 @@ class _ReservationDetailsPageState
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF111827),
+                    color: BazzarColors.ink,
                   ),
                 ),
               ],
@@ -461,7 +460,7 @@ class _ReservationDetailsPageState
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF111827),
+                      color: BazzarColors.ink,
                     ),
                   ),
                 ],
@@ -469,7 +468,7 @@ class _ReservationDetailsPageState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: BazzarColors.soft,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -477,19 +476,19 @@ class _ReservationDetailsPageState
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4B5563),
+                    color: BazzarColors.body,
                   ),
                 ),
               ),
             ],
           ),
-          const Divider(height: 24, color: Color(0xFFF3F4F6)),
+          const Divider(height: 24, color: BazzarColors.soft),
           if (products.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
               child: Text(
                 'Aucun détail de produit disponible.',
-                style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+                style: TextStyle(color: BazzarColors.muted, fontSize: 13),
               ),
             )
           else
@@ -498,7 +497,7 @@ class _ReservationDetailsPageState
               physics: const NeverScrollableScrollPhysics(),
               itemCount: products.length,
               separatorBuilder: (_, __) =>
-                  const Divider(height: 20, color: Color(0xFFF9FAFB)),
+                  const Divider(height: 20, color: BazzarColors.background),
               itemBuilder: (context, index) {
                 final product = products[index] as Map<dynamic, dynamic>;
                 return _buildProductItem(product);
@@ -510,39 +509,40 @@ class _ReservationDetailsPageState
   }
 
   Widget _buildProductItem(Map<dynamic, dynamic> product) {
-    final name =
-        (product['nom'] ?? product['name'] ?? 'Article sans nom').toString();
+    final name = (product['nom'] ?? product['name'] ?? 'Article sans nom')
+        .toString();
     final quantity =
         product['quantité'] as int? ?? product['quantity'] as int? ?? 1;
-    final price = num.tryParse(
-            (product['prix_unitaire'] ?? product['price'] ?? 0).toString()) ??
+    final price =
+        num.tryParse(
+          (product['prix_unitaire'] ?? product['price'] ?? 0).toString(),
+        ) ??
         0;
-    final imageUrl =
-        (product['image'] ?? product['image_url'])?.toString();
+    final imageUrl = (product['image'] ?? product['image_url'])?.toString();
     final itemTotal = price * quantity;
 
     return Row(
       children: [
         // Image du produit
         ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Container(
             width: 56,
             height: 56,
-            color: const Color(0xFFF3F4F6),
+            color: BazzarColors.soft,
             child: (imageUrl != null && imageUrl.isNotEmpty)
                 ? Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => const Icon(
                       Icons.image_not_supported_rounded,
-                      color: Color(0xFF9CA3AF),
+                      color: BazzarColors.muted,
                       size: 24,
                     ),
                   )
                 : const Icon(
                     Icons.inventory_2_rounded,
-                    color: Color(0xFF9CA3AF),
+                    color: BazzarColors.muted,
                     size: 24,
                   ),
           ),
@@ -559,7 +559,7 @@ class _ReservationDetailsPageState
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
-                  color: Color(0xFF111827),
+                  color: BazzarColors.ink,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -569,9 +569,11 @@ class _ReservationDetailsPageState
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                      color: BazzarColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -579,7 +581,7 @@ class _ReservationDetailsPageState
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF7C3AED),
+                        color: BazzarColors.primary,
                       ),
                     ),
                   ),
@@ -588,7 +590,7 @@ class _ReservationDetailsPageState
                     '${CurrencyFormatter.format(price.toDouble())} / unité',
                     style: const TextStyle(
                       fontSize: 12,
-                      color: Color(0xFF6B7280),
+                      color: BazzarColors.muted,
                     ),
                   ),
                 ],
@@ -603,7 +605,7 @@ class _ReservationDetailsPageState
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
-            color: Color(0xFF111827),
+            color: BazzarColors.ink,
           ),
         ),
       ],
@@ -619,7 +621,7 @@ class _ReservationDetailsPageState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF9CA3AF)),
+        Icon(icon, size: 18, color: BazzarColors.muted),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -629,7 +631,7 @@ class _ReservationDetailsPageState
                 title,
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF6B7280),
+                  color: BazzarColors.muted,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -638,11 +640,10 @@ class _ReservationDetailsPageState
                 value,
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight:
-                      isHighlight ? FontWeight.w600 : FontWeight.w600,
+                  fontWeight: isHighlight ? FontWeight.w600 : FontWeight.w600,
                   color: isHighlight
                       ? const Color(0xFFD97706)
-                      : const Color(0xFF111827),
+                      : BazzarColors.ink,
                 ),
               ),
             ],
@@ -683,10 +684,7 @@ class _ReservationDetailsPageState
                   SizedBox(width: 10),
                   Text(
                     'Confirmer la livraison & Encaissement',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -793,7 +791,7 @@ class _DeliveryConfirmationSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              color: BazzarColors.ink,
             ),
           ),
           const SizedBox(height: 8),
@@ -802,7 +800,7 @@ class _DeliveryConfirmationSheet extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 14,
-              color: Color(0xFF6B7280),
+              color: BazzarColors.muted,
               height: 1.4,
             ),
           ),
@@ -810,9 +808,9 @@ class _DeliveryConfirmationSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              color: BazzarColors.background,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: BazzarColors.border),
             ),
             child: Text(
               CurrencyFormatter.format(totalAmount),
@@ -830,11 +828,11 @@ class _DeliveryConfirmationSheet extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context, false),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF4B5563),
+                    foregroundColor: BazzarColors.body,
                     side: const BorderSide(color: Color(0xFFCBD5E1)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: const Text(
@@ -853,7 +851,7 @@ class _DeliveryConfirmationSheet extends StatelessWidget {
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: const Text(

@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -58,7 +59,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     if (!_isValidEmail(email)) {
       if (!mounted) return;
-      AppNotification.showError(context, 'Veuillez saisir une adresse email valide.');
+      AppNotification.showError(
+        context,
+        'Veuillez saisir une adresse email valide.',
+      );
       return;
     }
 
@@ -84,7 +88,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     setState(() => _isLoading = true);
 
     try {
-      await ref.read(authRepositoryProvider).signUp(
+      await ref
+          .read(authRepositoryProvider)
+          .signUp(
             email: email,
             password: password,
             fullName: fullName,
@@ -116,7 +122,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           title: const Text('Compte créé'),
           content: const Text('Votre compte a été créé avec succès.'),
           actions: [
@@ -135,7 +143,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F7FF),
+      backgroundColor: BazzarColors.background,
       body: Stack(
         children: [
           Positioned.fill(
@@ -166,7 +174,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           onPressed: () => context.pop(),
                           icon: const Icon(
                             Icons.arrow_back_ios_new_rounded,
-                            color: Color(0xFF6D28D9),
+                            color: BazzarColors.primaryDark,
                             size: 27,
                           ),
                         ),
@@ -175,7 +183,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       const SizedBox(height: 28),
                       _buildRoleSelector(),
                       const SizedBox(height: 22),
-                      _buildForm(),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(color: BazzarColors.border),
+                        ),
+                        child: _buildForm(),
+                      ),
                       const SizedBox(height: 24),
                       _buildLoginLink(),
                     ],
@@ -194,12 +210,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       children: [
         Image.asset(
           'sary/logo.png',
-          width: 230,
-          height: 190,
+          width: 160,
+          height: 125,
           fit: BoxFit.contain,
           errorBuilder: (_, __, ___) => const Icon(
             Icons.shopping_bag_rounded,
-            color: Color(0xFF6D28D9),
+            color: BazzarColors.primaryDark,
             size: 86,
           ),
         ),
@@ -219,7 +235,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   Widget _buildRoleSelector() {
     return Container(
-      height: 86,
+      constraints: const BoxConstraints(minHeight: 100),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.82),
         border: Border.all(color: const Color(0xFFD3CFFF), width: 1.5),
@@ -260,11 +276,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         margin: const EdgeInsets.all(2),
-        padding: const EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
         decoration: BoxDecoration(
           gradient: selected
               ? const LinearGradient(
-                  colors: [Color(0xFF7C3AED), Color(0xFF8B3FF2)],
+                  colors: [BazzarColors.primary, Color(0xFF8B3FF2)],
                 )
               : null,
           borderRadius: BorderRadius.circular(23),
@@ -274,7 +290,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             Icon(
               icon,
               color: selected ? Colors.white : const Color(0xFF5F5B91),
-              size: 39,
+              size: 28,
             ),
             const SizedBox(width: 12),
             Flexible(
@@ -287,9 +303,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: selected
-                          ? Colors.white
-                          : const Color(0xFF4B477E),
+                      color: selected ? Colors.white : const Color(0xFF4B477E),
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
                     ),
@@ -302,7 +316,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     style: TextStyle(
                       color: selected
                           ? Colors.white.withValues(alpha: 0.9)
-                          : const Color(0xFF9692C3),
+                          : BazzarColors.muted,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -342,7 +356,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           obscureText: _obscurePassword,
           suffixIcon: _visibilityButton(
             hidden: _obscurePassword,
-            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            onPressed: () =>
+                setState(() => _obscurePassword = !_obscurePassword),
           ),
         ),
         const SizedBox(height: 14),
@@ -362,16 +377,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
-          height: 60,
           child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF7C3AED), Color(0xFF8B3FF2)],
+                colors: [BazzarColors.primary, Color(0xFF8B3FF2)],
               ),
               borderRadius: BorderRadius.circular(19),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.28),
+                  color: BazzarColors.primary.withValues(alpha: 0.28),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),
@@ -402,11 +416,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   : const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Créer mon compte',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w800,
+                        Flexible(
+                          child: Text(
+                            'Créer mon compte',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
                         SizedBox(width: 14),
@@ -433,7 +450,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      textInputAction: obscureText ? TextInputAction.done : TextInputAction.next,
+      textInputAction: obscureText
+          ? TextInputAction.done
+          : TextInputAction.next,
       style: const TextStyle(
         color: Color(0xFF4B477E),
         fontSize: 16,
@@ -467,7 +486,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
+          borderSide: const BorderSide(color: BazzarColors.primary, width: 2),
         ),
       ),
     );
@@ -491,10 +510,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Widget _buildLoginLink() {
     return Column(
       children: [
-        Row(
+        const Row(
           children: [
-            const Expanded(child: Divider(color: Color(0xFFB9B5D9))),
-            const Padding(
+            Expanded(child: Divider(color: Color(0xFFB9B5D9))),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'ou',
@@ -505,7 +524,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
               ),
             ),
-            const Expanded(child: Divider(color: Color(0xFFB9B5D9))),
+            Expanded(child: Divider(color: Color(0xFFB9B5D9))),
           ],
         ),
         const SizedBox(height: 22),
@@ -525,7 +544,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: const Text(
                 'Se connecter',
                 style: TextStyle(
-                  color: Color(0xFF6D28D9),
+                  color: BazzarColors.primaryDark,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),

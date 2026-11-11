@@ -1,3 +1,4 @@
+import 'package:live_shopping/core/theme/bazzar_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_shopping/core/widgets/dashboard_card.dart';
@@ -12,7 +13,8 @@ class SellerDashboardPage extends ConsumerStatefulWidget {
   const SellerDashboardPage({super.key, required this.sellerId});
 
   @override
-  ConsumerState<SellerDashboardPage> createState() => _SellerDashboardPageState();
+  ConsumerState<SellerDashboardPage> createState() =>
+      _SellerDashboardPageState();
 }
 
 class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
@@ -30,7 +32,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
       _scaffoldKey.currentState?.closeDrawer();
     }
 
-    if (index == 1) { // Index 1 correspond à 'Produits'
+    if (index == 1) {
+      // Index 1 correspond à 'Produits'
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -49,9 +52,16 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
       key: _scaffoldKey,
       backgroundColor: const Color(0xFFF4F6F9),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: BazzarColors.surface,
+        foregroundColor: BazzarColors.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 76,
+        titleSpacing: 20,
+        shape: const Border(bottom: BorderSide(color: BazzarColors.border)),
+
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -68,7 +78,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             const Text(
               'Miantsena Store',
               style: TextStyle(
-                color: Color(0xFF1E1E2D),
+                color: BazzarColors.ink,
                 fontSize: 19,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0,
@@ -76,10 +86,14 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             ),
           ],
         ),
+
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFF1E1E2D)),
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: BazzarColors.ink,
+            ),
             tooltip: 'Notifications',
           ),
           IconButton(
@@ -107,10 +121,30 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 crossAxisSpacing: 16,
                 childAspectRatio: 1.5,
                 children: [
-                  _buildKPI('Réservations', '${stats['reservations']}', const Color(0xFF3B82F6), Icons.calendar_today_rounded),
-                  _buildKPI('Produits', '${stats['products']}', const Color(0xFF8B5CF6), Icons.inventory_2_rounded),
-                  _buildKPI('Ventes', '0', const Color(0xFF10B981), Icons.trending_up_rounded),
-                  _buildKPI('Solde', '0€', const Color(0xFFF59E0B), Icons.account_balance_wallet_rounded),
+                  _buildKPI(
+                    'Réservations',
+                    '${stats['reservations']}',
+                    const Color(0xFF3B82F6),
+                    Icons.calendar_today_rounded,
+                  ),
+                  _buildKPI(
+                    'Produits',
+                    '${stats['products']}',
+                    const Color(0xFF8B5CF6),
+                    Icons.inventory_2_rounded,
+                  ),
+                  _buildKPI(
+                    'Ventes',
+                    '0',
+                    const Color(0xFF10B981),
+                    Icons.trending_up_rounded,
+                  ),
+                  _buildKPI(
+                    'Solde',
+                    '0€',
+                    const Color(0xFFF59E0B),
+                    Icons.account_balance_wallet_rounded,
+                  ),
                 ],
               ),
               loading: () => const SizedBox(
@@ -118,7 +152,10 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 child: Center(child: CircularProgressIndicator.adaptive()),
               ),
               error: (err, _) => Center(
-                child: Text('Erreur: $err', style: const TextStyle(color: Colors.redAccent)),
+                child: Text(
+                  'Erreur: $err',
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
               ),
             ),
             const SizedBox(height: 28),
@@ -149,15 +186,33 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           selectedItemColor: theme.primaryColor,
           unselectedItemColor: Colors.grey.shade400,
           showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 12,
+          ),
           elevation: 0,
           backgroundColor: Colors.white,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: 'Dashboard'),
-            BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_rounded), label: 'Produits'),
-            BottomNavigationBarItem(icon: Icon(Icons.receipt_long_rounded), label: 'Commandes'),
-            BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'Profil'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_rounded),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_bag_rounded),
+              label: 'Produits',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long_rounded),
+              label: 'Commandes',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline_rounded),
+              label: 'Profil',
+            ),
           ],
           type: BottomNavigationBarType.fixed,
         ),
@@ -171,7 +226,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF1E1E2D),
+        color: BazzarColors.ink,
         letterSpacing: 0,
       ),
     );
@@ -211,7 +266,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1E1E2D),
+              color: BazzarColors.ink,
               letterSpacing: 0,
             ),
           ),
@@ -238,9 +293,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           child: _shortcutItem(Icons.local_offer_rounded, 'Promos', () {}),
         ),
         const SizedBox(width: 12),
-        Expanded(
-          child: _shortcutItem(Icons.bar_chart_rounded, 'Stats', () {}),
-        ),
+        Expanded(child: _shortcutItem(Icons.bar_chart_rounded, 'Stats', () {})),
       ],
     );
   }
@@ -284,7 +337,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E1E2D),
+                  color: BazzarColors.ink,
                 ),
               ),
             ],
@@ -301,9 +354,13 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 3,
-        separatorBuilder: (ctx, i) => Divider(height: 1, color: Colors.grey.shade100),
+        separatorBuilder: (ctx, i) =>
+            Divider(height: 1, color: Colors.grey.shade100),
         itemBuilder: (ctx, i) => ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
           leading: CircleAvatar(
             backgroundColor: Colors.grey.shade100,
             child: const Icon(Icons.person_rounded, color: Colors.grey),
@@ -321,7 +378,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
-              color: Color(0xFF1E1E2D),
+              color: BazzarColors.ink,
             ),
           ),
         ),
